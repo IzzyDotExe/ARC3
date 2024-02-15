@@ -1,0 +1,18 @@
+const app = require('../src/app.js');
+const port = process.env.PORT || 3000;
+
+const dotenv = require('dotenv');
+dotenv.config();
+
+(async () => {
+
+  app.listen(port, () => {
+    console.log('connected at port: ' + port);
+  });
+
+  process.on('SIGTERM', () => {
+    server.close(() => {
+      console.log('closing...')
+    })
+  })
+})();

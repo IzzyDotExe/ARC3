@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    image: postgres:latest
+    container_name: arc3-postgres_db
+    restart: always
+    networks:
+      - common-net
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
+  arc3:
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    image: arc3
+    build:
+      dockerfile: Dockerfile.arc3
+    container_name: arc3
+    networks:
+      - common-net
+
+  arc-api:
+    env_file:
+      - .env
+    depends_on:
+      - arc3
+    image: arc3-api
+    build:
+      dockerfile: Dockerfile.arc3-api
+    container_name: arc3-api
+    ports:
+      - 3000:3000
+    networks:
+      - common-net
+
+
+networks:
+  common-net: {}
+
+volumes:
+  postgres_data:
