@@ -41,7 +41,6 @@ services:
     networks:
       - common-net
 
-
 networks:
   common-net: {}
 
