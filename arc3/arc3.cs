@@ -12,9 +12,9 @@ namespace arc3 {
 
     private DiscordSocketClient? _client;
     
-    private IServiceProvider _serviceProvider;
+    private IServiceProvider? _serviceProvider;
 
-    private InteractionService _interactions;
+    private InteractionService? _interactions;
 
     public static Task Main(string[] args) => new arc3().MainAsync();
 
@@ -79,6 +79,13 @@ namespace arc3 {
 
     private async Task ReadyAsync()
     {
+
+      if (_client == null)
+        throw new Exception("Client is not initialized");
+
+      if (_interactions == null)
+        throw new Exception("Interaction service is not initialized");
+
       try
       { 
         // Things to be run when the bot is ready
@@ -91,9 +98,9 @@ namespace arc3 {
 
           // Get the ID of the first guild the bot is a member of
           // Then register the commands to that guild
-          var guildId = _client.Guilds.First().Id;
-          await _interactions.RegisterCommandsToGuildAsync(guildId, true);
-          //await _interactions.RegisterCommandsGloballyAsync(true);
+          // var guildId = _client.Guilds.First().Id;
+          // await _interactions.RegisterCommandsToGuildAsync(guildId, true);
+          await _interactions.RegisterCommandsGloballyAsync(true);
         }
         else
         {
