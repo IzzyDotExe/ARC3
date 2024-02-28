@@ -11,6 +11,7 @@
     <PackageReference Include="Discord.NET" Version="3.13.1" />
     <PackageReference Include="dotenv.net" Version="3.1.3" />
     <PackageReference Include="microsoft.extensions.dependencyinjection" Version="8.0.0" />
+    <PackageReference Include="Mongodb.Driver" Version="2.24.0" />
   </ItemGroup>
 
 </Project>
