@@ -5,10 +5,12 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Discord;
 using System.Reflection;
+using Arc3.Core.Services;
+using arc3.Core.Services;
 
-namespace arc3 {
+namespace Arc3 {
 
-  class arc3 {
+  class Arc3 {
 
     private DiscordSocketClient? _client;
     
@@ -16,12 +18,12 @@ namespace arc3 {
 
     private InteractionService? _interactions;
 
-    public static Task Main(string[] args) => new arc3().MainAsync();
+    public static Task Main(string[] args) => new Arc3().MainAsync();
 
     public async Task MainAsync() {
 
       // Load the .env file from the root directory change the path if needed
-      var envFilePath = Path.GetFullPath("../../../.env");
+      var envFilePath = Path.GetFullPath("../.env");
       Console.WriteLine($".env file path:{envFilePath}"); // Debugging
 
       var envOptions = new DotEnvOptions(envFilePaths: new[] { envFilePath });
@@ -39,15 +41,18 @@ namespace arc3 {
       _serviceProvider = new ServiceCollection()
         .AddSingleton<InteractionService>()
         .AddSingleton<DiscordSocketClient>(_client)
+        .AddSingleton<DbService>()
+        .AddSingleton<UptimeService>()
         .BuildServiceProvider();
 
       // Instantiate your services
       _interactions = _serviceProvider.GetRequiredService<InteractionService>();
+      var dbService = _serviceProvider.GetRequiredService<DbService>();
 
       _client.InteractionCreated += async interaction => 
       {
         var ctx = new SocketInteractionContext(_client, interaction);
-        await _interactions.ExecuteCommandAsync(ctx, services: null);
+        await _interactions.ExecuteCommandAsync(ctx, services: _serviceProvider);
       };
 
       _client.Log += Log;
@@ -98,9 +103,9 @@ namespace arc3 {
 
           // Get the ID of the first guild the bot is a member of
           // Then register the commands to that guild
-          // var guildId = _client.Guilds.First().Id;
-          // await _interactions.RegisterCommandsToGuildAsync(guildId, true);
-          await _interactions.RegisterCommandsGloballyAsync(true);
+          var guildId = (ulong)707260999496892436;
+          await _interactions.RegisterCommandsToGuildAsync(guildId, true);
+          // await _interactions.RegisterCommandsGloballyAsync(true);
         }
         else
         {
