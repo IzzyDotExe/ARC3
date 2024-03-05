@@ -24,6 +24,34 @@ public class ModerationModule : ArcModule
   {
     // Register listeners
     _clientInstance.ButtonExecuted += ButtonInteractionCreated;
+    _clientInstance.ModalSubmitted += ClientInstanceOnModalSubmitted;
+  }
+
+  private async Task ClientInstanceOnModalSubmitted(SocketModal arg)
+  {
+    
+    // await arg.DeferAsync();
+    
+    if (arg.Data.CustomId.StartsWith("addnote"))
+    {
+      ulong userSnowflake = ulong.Parse(arg.Data.CustomId.Split('.')[1]);
+      var author = arg.User;
+      // var user = await _clientInstance.GetUserAsync(userSnowflake);
+
+      String content = arg.Data.Components.First(x => x.CustomId == "usernote.content").Value;
+
+      await DbService.AddUserNote(new UserNote
+      {
+        AuthorSnowflake = (long)author.Id,
+        Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+        GuildSnowflake = (long)arg.GuildId!,
+        Note = content,
+        UserSnowflake = (long)userSnowflake
+      });
+
+      await arg.RespondAsync("User note was added!", ephemeral: true);
+
+    }
   }
 
   #region User Notes
@@ -40,6 +68,24 @@ public class ModerationModule : ArcModule
   }
 
   private async Task AddUserNote(SocketMessageComponent ctx) {
+
+    ulong userId = ulong.Parse(ctx.Data.CustomId.Split('.')[1]);
+    var user = await _clientInstance.GetUserAsync(userId);
+
+    var modal = new ModalBuilder()
+      .WithTitle($"Add note to {user.Username}")
+      .WithCustomId($"addnote.{userId}")
+      .AddComponents(new List<IMessageComponent>() {
+        new TextInputBuilder()
+          .WithLabel("Note")
+          .WithCustomId("usernote.content")
+          .WithPlaceholder("Enter a note")
+          .WithRequired(true)
+          .WithStyle(TextInputStyle.Paragraph).Build()
+      }, 0)
+    .Build();
+
+    await ctx.RespondWithModalAsync(modal);
 
   }
 
@@ -72,8 +118,6 @@ public class ModerationModule : ArcModule
     await PaginationService.CreatePaginationResponse(pages, ctx);
 
   }
-
-
 
   [UserCommand("User Notes")]
   public async Task UserNotes(SocketUser user) {
