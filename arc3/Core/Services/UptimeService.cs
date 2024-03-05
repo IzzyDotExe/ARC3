@@ -3,7 +3,7 @@ using Arc3.Core.Services;
 using Discord.Interactions;
 using Discord.WebSocket;
 
-namespace arc3.Core.Services;
+namespace Arc3.Core.Services;
 
 public class UptimeService : ArcService {
 
