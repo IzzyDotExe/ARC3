@@ -7,7 +7,7 @@ public class UserNote {
 
   [BsonId]
   [BsonRepresentation(BsonType.String)]
-  public string Id { get; set; }
+  public string Id { get; set; } = string.Empty;
 
   [BsonElement("usersnowflake")]
   public long UserSnowflake;
@@ -16,7 +16,7 @@ public class UserNote {
   public long GuildSnowflake;
 
   [BsonElement("note")]
-  public string Note { get; set; }
+  public string Note { get; set; } = string.Empty;
 
   [BsonElement("date")]
   public long Date { get; set; }
