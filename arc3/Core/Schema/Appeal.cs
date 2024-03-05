@@ -7,7 +7,7 @@ public class Appeal {
 
   [BsonId]
   [BsonRepresentation(BsonType.String)]
-  public string Id { get; set; }
+  public string Id { get; set; } = String.Empty;
 
   [BsonElement("usersnowflake")]
   public long UserSnowflake { get; set; }
