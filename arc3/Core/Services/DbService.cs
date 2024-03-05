@@ -2,6 +2,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using Arc3.Core.Schema;
 
 namespace Arc3.Core.Services;
 
@@ -48,6 +49,45 @@ public class DbService : ArcService {
   {
     var database = mongoClient.GetDatabase(DB_NAME);
     return database.GetCollection<T>(name);
+  }
+
+  public async Task<List<UserNote>> GetUserNotes(ulong userSnowflake, ulong guildSnowflake) {
+    
+    // Get the notes collection
+    var notesCollection = GetCollection<UserNote>("user_notes");
+    
+    // Build a filter for the searching the notes collection
+    var filter = Builders<UserNote>.Filter.Where(x => 
+      x.GuildSnowflake == (long)guildSnowflake && 
+      x.UserSnowflake == (long)userSnowflake
+    );
+
+    // Get the user notes
+    var notes = notesCollection.Find(filter).ToList();
+
+    return notes;
+
+  }
+
+  public async Task AddUserNote(UserNote note) {
+    
+    var filter = Builders<UserNote>.Filter.Where(x=>x.Id == note.Id);
+    var allFilter = Builders<UserNote>.Filter.Where(x=>x.Id == x.Id);
+    
+    IMongoCollection<UserNote> notes = GetCollection<UserNote>("user_notes");
+
+    note.Id = (notes.Count(allFilter)+1).ToString();
+
+    await notes.ReplaceOneAsync(filter, note);
+
+  }
+
+  public async Task RemoveUserNote(string id) {
+
+    IMongoCollection<UserNote> notes = GetCollection<UserNote>("user_notes");
+    var filter = Builders<UserNote>.Filter.Where(x=>x.Id == id);
+    await notes.DeleteOneAsync(filter);
+
   }
 
 }
