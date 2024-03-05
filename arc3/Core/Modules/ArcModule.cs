@@ -1,18 +1,28 @@
 using Discord.Interactions;
+using Discord.WebSocket;
+using DnsClient.Protocol;
 
 namespace Arc3.Core.Modules;
 
 public abstract class ArcModule : InteractionModuleBase<SocketInteractionContext> {
 
-  protected static bool _loaded = false;
+  private static Dictionary<string, bool> _loadedDict = new Dictionary<string, bool>();
+  protected readonly DiscordSocketClient _clientInstance;
 
-  public ArcModule() {
+  public ArcModule(DiscordSocketClient clientInstance, string moduleName) {
 
-    if (!_loaded)
-      RegisterListeners();
+    var loaded = _loadedDict.ContainsKey(moduleName);
+
+    _clientInstance = clientInstance;
     
-    _loaded = true;
+    if (loaded)
+      return;
 
+    RegisterListeners(); 
+
+    Console.WriteLine($"MODULE LOADED: {moduleName}");
+    _loadedDict[moduleName] = true;
+    
   }
 
   public abstract void RegisterListeners();
