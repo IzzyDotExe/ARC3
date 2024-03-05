@@ -62,9 +62,6 @@ public class ModerationModule : ArcModule
     
     if (ctx.Data.CustomId.StartsWith("addnote."))
       await AddUserNote(ctx);
-
-    if (ctx.Data.CustomId.StartsWith("usernote.delete."))
-      await DeleteUserNote(ctx);
   }
 
   private async Task AddUserNote(SocketMessageComponent ctx) {
@@ -88,11 +85,7 @@ public class ModerationModule : ArcModule
     await ctx.RespondWithModalAsync(modal);
 
   }
-
-  private async Task DeleteUserNote(SocketMessageComponent ctx) {
-
-  }
-
+  
   private async Task ViewNotes(SocketMessageComponent ctx) {
     
     await ctx.DeferAsync(true);
@@ -157,6 +150,10 @@ public class ModerationModule : ArcModule
   }
 
   #endregion
-
+  
+  # region Jail
+  
+  
+  #endregion
 
 }
