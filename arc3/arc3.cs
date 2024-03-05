@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Discord;
 using System.Reflection;
 using Arc3.Core.Services;
-using arc3.Core.Services;
 
 namespace Arc3 {
 
@@ -42,6 +41,7 @@ namespace Arc3 {
         .AddSingleton<InteractionService>()
         .AddSingleton<DiscordSocketClient>(_client)
         .AddSingleton<DbService>()
+        .AddSingleton<PaginationService>()
         .AddSingleton<UptimeService>()
         .BuildServiceProvider();
 
