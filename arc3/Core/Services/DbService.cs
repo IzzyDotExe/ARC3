@@ -71,14 +71,13 @@ public class DbService : ArcService {
 
   public async Task AddUserNote(UserNote note) {
     
-    var filter = Builders<UserNote>.Filter.Where(x=>x.Id == note.Id);
-    var allFilter = Builders<UserNote>.Filter.Where(x=>x.Id == x.Id);
+    var allFilter = Builders<UserNote>.Filter.Where(x=>true);
     
     IMongoCollection<UserNote> notes = GetCollection<UserNote>("user_notes");
 
     note.Id = (notes.Count(allFilter)+1).ToString();
 
-    await notes.ReplaceOneAsync(filter, note);
+    await notes.InsertOneAsync(note);
 
   }
 
