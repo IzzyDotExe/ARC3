@@ -26,17 +26,20 @@ public class Page {
 
   public string Content { get; set; }
   public Embed Embed { get; set; }
-  public List<ActionRowComponent> Components { get; set; }
+  public List<ActionRowBuilder> Components { get; set; }
 
-  public Page(string content = "", EmbedBuilder? embed = null, List<ActionRowComponent>? components = null) {
+  public Page(string content = "", EmbedBuilder? embed = null, List<ActionRowBuilder>? components = null) {
     this.Content = content;
     this.Embed = embed?.Build();
-    this.Components = components ?? new List<ActionRowComponent>();
+    this.Components = components ?? new List<ActionRowBuilder>();
   }
 
 }
 
 public class PaginationSession {
+  
+   public DbService DbService { get; set; }
+   
   private SocketMessageComponent _interactionContext;
 
   private DiscordSocketClient _clientInstance;
@@ -47,34 +50,31 @@ public class PaginationSession {
 
   private int _pageIndex;
 
-  private MessageComponent _paginationButtons {
-    get {
-      return new ComponentBuilder()
-        .WithRows(new List<ActionRowBuilder>() {
-          new ActionRowBuilder()
-            .WithComponents(new List<IMessageComponent>() {
-              new ButtonBuilder()
-                .WithStyle(ButtonStyle.Primary)
-                .WithCustomId("pagination.previous")
-                .WithLabel(" ")
-                .WithEmote(PaginationEmojis.Left)
-                .WithDisabled(!(_pages.Count > 1)).Build(),
-              new ButtonBuilder()
-                .WithStyle(ButtonStyle.Primary)
-                .WithCustomId("pagination.stop")
-                .WithLabel(" ")
-                .WithEmote(PaginationEmojis.Stop)
-                .WithDisabled(false).Build(),
-              new ButtonBuilder()
-                .WithStyle(ButtonStyle.Primary)
-                .WithCustomId("pagination.next")
-                .WithLabel(" ")
-                .WithEmote(PaginationEmojis.Right)
-                .WithDisabled(!(_pages.Count > 1)).Build()
-            })
-        }).Build();
-    }
-  }
+  private CancellationTokenSource _paginationToken = new CancellationTokenSource();
+
+  private ActionRowBuilder _paginationButtons =>
+    new ActionRowBuilder()
+      .WithComponents(new List<IMessageComponent>()
+      {
+        new ButtonBuilder()
+          .WithStyle(ButtonStyle.Primary)
+          .WithCustomId("pagination.previous")
+          .WithLabel(" ")
+          .WithEmote(PaginationEmojis.Left)
+          .WithDisabled(!(_pages.Count > 1)).Build(),
+        new ButtonBuilder()
+          .WithStyle(ButtonStyle.Primary)
+          .WithCustomId("pagination.stop")
+          .WithLabel(" ")
+          .WithEmote(PaginationEmojis.Stop)
+          .WithDisabled(false).Build(),
+        new ButtonBuilder()
+          .WithStyle(ButtonStyle.Primary)
+          .WithCustomId("pagination.next")
+          .WithLabel(" ")
+          .WithEmote(PaginationEmojis.Right)
+          .WithDisabled(!(_pages.Count > 1)).Build()
+      });
 
   public PaginationSession(SocketMessageComponent interactionContext, List<Page> pages, DiscordSocketClient clientInstance) {
     _interactionContext = interactionContext;
@@ -90,8 +90,7 @@ public class PaginationSession {
     Task.Run(async () => {
       await Task.Delay(60000);
       await Stop();
-    });
-    ;
+    }, _paginationToken.Token);
   }
 
   public async Task Start() {
@@ -114,8 +113,12 @@ public class PaginationSession {
   private async Task Update() {
     await _interactionContext.ModifyOriginalResponseAsync(x => {
       x.Embed = _pages[_pageIndex].Embed;
-      // x.Components = _pages[_pageIndex].Components;
-      x.Components = _paginationButtons;
+      var comps = new List<ActionRowBuilder>();
+      comps.Add(_paginationButtons);
+      comps.AddRange(_pages[_pageIndex].Components);
+      x.Components = new ComponentBuilder()
+        .WithRows(comps)
+        .Build();
       x.Content = _pages[_pageIndex].Content;
     });
   }
@@ -148,6 +151,8 @@ public class PaginationSession {
         break;
 
       case "pagination.stop":
+        _paginationToken.Cancel();
+        _paginationToken.Dispose();
         await Stop();
         break;
 
@@ -164,8 +169,13 @@ public class PaginationSession {
         // Get the first row that has any component taht is a delete component.
         x => x.Components.Any(x=> x.CustomId.Contains("delete"))
       );
+      
       currentPage.Components.Remove(comp);
       currentPage.Embed = new EmbedBuilder().WithDescription("```Deleted```").Build();
+       
+      // Delete the note
+      Console.WriteLine(comp.Components.First().CustomId);
+      await DbService.RemoveUserNote(comp.Components.First().CustomId.Split('.')[2]);
       
       await Update();
 
@@ -176,15 +186,23 @@ public class PaginationSession {
   
 }
 
-public class PaginationService : ArcService {
+public class PaginationService : ArcService
+{
 
-  public PaginationService(DiscordSocketClient clientInstance, InteractionService interactionService)
-    : base(clientInstance, interactionService, "Pagination") {
-
-    }
+  private readonly DbService _dbService;
+    
+  public PaginationService(DiscordSocketClient clientInstance, InteractionService interactionService, DbService dbService)
+    : base(clientInstance, interactionService, "Pagination")
+  {
+    _dbService = dbService;
+  }
 
     public async Task CreatePaginationResponse(List<Page> pages, SocketMessageComponent interactionCtx) {
-      PaginationSession session = new PaginationSession(interactionCtx, pages, _clientInstance);
+      PaginationSession session = new PaginationSession(interactionCtx, pages, _clientInstance)
+      {
+        DbService = _dbService
+      };
+      
       await session.Start();
     }
 

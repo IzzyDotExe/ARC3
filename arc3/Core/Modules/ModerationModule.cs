@@ -101,7 +101,7 @@ public class ModerationModule : ArcModule
 
     List<UserNote> notes = await DbService.GetUserNotes(userSnowflake, ctx.GuildId??0);
     
-    List<Page> pages=  new List<Page>();
+    List<Page> pages =  new List<Page>();
     foreach (var note in notes) {
       var embed = note.CreateEmbed(_clientInstance);
       var page = new Page(embed:embed);
@@ -110,8 +110,8 @@ public class ModerationModule : ArcModule
           .WithStyle(ButtonStyle.Danger)
           .WithCustomId($"usernote.delete.{note.Id}")
           .WithLabel("Delete")
-          .WithEmote(new Emoji("🗑️"))).Build();
-      page.Components = new List<ActionRowComponent>() { comp };
+          .WithEmote(new Emoji("🗑️")));
+      page.Components = new List<ActionRowBuilder>() { comp };
       pages.Add(page);
     }
 
