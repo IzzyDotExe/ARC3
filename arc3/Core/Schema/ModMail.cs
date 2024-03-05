@@ -8,6 +8,9 @@ public class ModMail {
   [BsonId]
   [BsonRepresentation(BsonType.String)]
   public string Id { get; set; }
+  
+  [BsonElement("guildsnowflake")]
+  public long GuildSnowflake { get; set; }
 
   [BsonElement("channelsnowflake")]
   public long ChannelSnowflake { get; set; }

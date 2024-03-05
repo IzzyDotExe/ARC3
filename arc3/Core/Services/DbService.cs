@@ -63,9 +63,9 @@ public class DbService : ArcService {
     );
 
     // Get the user notes
-    var notes = notesCollection.Find(filter).ToList();
+    var notes = await notesCollection.FindAsync(filter);
 
-    return notes;
+    return await notes.ToListAsync();
 
   }
 
@@ -75,7 +75,7 @@ public class DbService : ArcService {
     
     IMongoCollection<UserNote> notes = GetCollection<UserNote>("user_notes");
 
-    note.Id = (notes.Count(allFilter)+1).ToString();
+    note.Id = (await notes.CountDocumentsAsync(allFilter) + 1).ToString();
 
     await notes.InsertOneAsync(note);
 
@@ -89,4 +89,45 @@ public class DbService : ArcService {
 
   }
 
+  // Get Active modmails
+  public async Task<List<ModMail>> GetModMails(ulong guildSnowflake)
+  {
+    
+    // Get the modmail collection
+    var modmailscollection = GetCollection<ModMail>("mod_mails");
+    
+    // Build a filter for searching the modmails
+    var filter = Builders<ModMail>.Filter.Where(x => 
+      x.GuildSnowflake == (long)guildSnowflake
+    );
+    
+    // Get the modmails
+    var mails = await modmailscollection.FindAsync(filter);
+
+    return await mails.ToListAsync();
+
+  }
+  
+  // Add a modmail
+  public async Task AddModMail(ModMail mail)
+  {
+    
+    var allFilter = Builders<ModMail>.Filter.Where(x => true);
+    
+    IMongoCollection<ModMail> mails = GetCollection<ModMail>("mod_mails");
+    
+    mail.Id = (await mails.CountDocumentsAsync(allFilter) + 1).ToString();
+    
+    await mails.InsertOneAsync(mail);
+    
+  }
+  
+  // Delete a modmail
+  public async Task RemoveModMail(string id)
+  {
+    var mails = GetCollection<ModMail>("mod_mails");
+    var filter = Builders<ModMail>.Filter.Where(x => x.Id == id);
+    await mails.DeleteOneAsync(filter);
+  }
+  
 }
