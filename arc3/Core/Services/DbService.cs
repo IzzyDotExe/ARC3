@@ -90,15 +90,15 @@ public class DbService : ArcService {
   }
 
   // Get Active modmails
-  public async Task<List<ModMail>> GetModMails(ulong guildSnowflake)
+  public async Task<List<ModMail>> GetModMails()
   {
     
     // Get the modmail collection
     var modmailscollection = GetCollection<ModMail>("mod_mails");
     
-    // Build a filter for searching the modmails
+    // Build a filter for searching all the modmails
     var filter = Builders<ModMail>.Filter.Where(x => 
-      x.GuildSnowflake == (long)guildSnowflake
+      true
     );
     
     // Get the modmails
