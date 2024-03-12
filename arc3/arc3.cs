@@ -9,8 +9,10 @@ using Arc3.Core.Services;
 
 namespace Arc3 {
 
-  class Arc3 {
-
+  class Arc3
+  {
+    public static string ArcVersion = "3.0";
+    
     private DiscordSocketClient? _client;
     
     private IServiceProvider? _serviceProvider;
