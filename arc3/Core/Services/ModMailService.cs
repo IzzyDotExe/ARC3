@@ -63,6 +63,8 @@ public class ModMailService : ArcService
                 var guild_id = Environment.GetEnvironmentVariable("GUILD_ID");
                 var guild = _clientInstance.GetGuild(ulong.Parse(guild_id??"0"));
                 modmail = new ModMail();
+
+            } catch {
                 
             }
 
