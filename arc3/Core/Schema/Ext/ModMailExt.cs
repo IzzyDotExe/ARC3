@@ -144,4 +144,17 @@ public static class ModMailExt
         var channel = await self.GetChannel(clientInstance);
         await channel.SendMessageAsync(embed:embed, components: buttons);
     }
+
+    public static bool InitAsync(this ModMail self, DiscordSocketClient clientInstance, SocketGuild guild, SocketUser user) {
+        
+        // TODO: Finish after guild config system.
+
+        self.UserSnowflake = ((long)user.Id);
+
+        if (guild is null)
+            return false;
+
+        return true;
+        
+    }
 }
