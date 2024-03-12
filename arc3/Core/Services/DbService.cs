@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Discord.Interactions;
 using Discord.WebSocket;
 using MongoDB.Driver;
@@ -51,6 +52,39 @@ public class DbService : ArcService {
     return database.GetCollection<T>(name);
   }
 
+  // Access for guild configs
+  public Dictionary<ulong, Dictionary<string, string>> Config {
+    get {
+
+      Dictionary<ulong, Dictionary<string, string>> configs =  new();
+      var allconfigs = GetGuildConfigs();
+      foreach (var config in allconfigs) {
+        if (!configs.ContainsKey((ulong)config.GuildSnowflake))
+          configs[(ulong)config.GuildSnowflake] = new Dictionary<string, string>();
+
+        configs[(ulong)config.GuildSnowflake][config.ConfigKey] = config.ConfigValue;
+      }
+      return configs;
+      
+    }
+  }
+
+  // Get all Guild Configs
+  public async Task<List<GuildConfig>> GetGuildConfigsAsync() {
+    var configsCollection = GetCollection<GuildConfig>("guild_configs");
+    var filter = Builders<GuildConfig>.Filter.Where(x => true);
+    var configs = await configsCollection.FindAsync(filter);
+    return await configs.ToListAsync();
+  }
+
+  public List<GuildConfig> GetGuildConfigs() {
+    var configsCollection = GetCollection<GuildConfig>("guild_configs");
+    var filter = Builders<GuildConfig>.Filter.Where(x => true);
+    var configs = configsCollection.Find(filter);
+    return configs.ToList();
+  }
+
+  // Get all usernotes
   public async Task<List<UserNote>> GetUserNotes(ulong userSnowflake, ulong guildSnowflake) {
     
     // Get the notes collection
@@ -69,6 +103,7 @@ public class DbService : ArcService {
 
   }
 
+  // Add a usernote
   public async Task AddUserNote(UserNote note) {
     
     var allFilter = Builders<UserNote>.Filter.Where(x=>true);
@@ -81,6 +116,7 @@ public class DbService : ArcService {
 
   }
 
+  // Remove a usernote
   public async Task RemoveUserNote(string id) {
 
     IMongoCollection<UserNote> notes = GetCollection<UserNote>("user_notes");
