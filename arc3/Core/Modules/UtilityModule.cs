@@ -8,6 +8,9 @@ using Discord.WebSocket;
 using ZstdSharp.Unsafe;
 using System.Runtime.InteropServices;
 using MongoDB.Bson;
+using Discord.Commands;
+using Arc3.Core.Schema;
+using System.Data.Common;
 
 namespace Arc3.Core.Modules;
 
@@ -131,6 +134,64 @@ public class UtilityModule : ArcModule {
       text: user.GetAvatarUrl(ImageFormat.Auto, 2048),
       components: new ComponentBuilder().AddRow(new ActionRowBuilder().AddComponent(selectOptions)).Build()
     );
+
+  }
+
+  [SlashCommand("SetConfig", "Set a config string for the guild")]
+  public async Task SetConfigCommand(
+    string configKey,
+    string configValue
+  ) {
+    var configs = await DbService.GetGuildConfigsAsync();
+    var config = configs.Where(c => c.GuildSnowflake == (long)Context.Guild.Id && c.ConfigKey.Equals(configKey));
+    GuildConfig conf;
+    if (config.Any()) {
+      conf = config.First();
+      conf.ConfigValue = configValue;
+    } else {
+
+      conf = new GuildConfig() {
+        Id = configs.Count + 1,
+        ConfigKey = configKey,
+        ConfigValue = configValue,
+        GuildSnowflake = Context.Guild.Id
+      }
+
+    }
+
+    await DbService.SetGuildConfigAsync(conf);
+
+    var embed = new EmbedBuilder()
+      .WithTitle("Config was updated sucessfully")
+      .WithDescription($"```{configKey} ---> {configValue}```");
+
+    await Context.Interaction.RespondAsync(embed: embed, ephemeral: true);
+
+  }
+
+  [SlashCommand("GetConfig", "Get a config string for the guilds")]
+  public async Task GetConfigCommand(
+    string configKey
+  ) {
+
+    var configValueExists = DbService.Config[Context.Guild.Id].ContainsKey(configKey);
+
+    string? configValue = null;
+    string description;
+
+    if (configValueExists)
+      configValue = DbService.Config[Context.Guild.Id][configKey];
+
+    description = $"``{configKey}`` is currently set to ``{configValue}``.";
+
+    if (configValue == null || string.IsNullOrEmpty(configValue) || configValue.ToLower().Equals("null"))
+      description = $"``{configKey}`` is not currently set to anything.";
+
+    var embed = new EmbedBuilder()
+      .WithTitle($"Config for {Context.Guild.Name}")
+      .WithDescription(description);
+    
+    await Context.Interaction.RespondAsync(embed: embed, ephemeral: true);
 
   }
 
