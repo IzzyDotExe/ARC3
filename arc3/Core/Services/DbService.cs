@@ -65,7 +65,7 @@ public class DbService : ArcService {
         configs[(ulong)config.GuildSnowflake][config.ConfigKey] = config.ConfigValue;
       }
       return configs;
-      
+
     }
   }
 
@@ -82,6 +82,19 @@ public class DbService : ArcService {
     var filter = Builders<GuildConfig>.Filter.Where(x => true);
     var configs = configsCollection.Find(filter);
     return configs.ToList();
+  }
+
+  public async Task SetGuildConfigAsync(GuildConfig config) {
+    
+    var configsCollection = GetCollection<GuildConfig>("guild_configs");
+   
+    var filter = Builders<GuildConfig>.Filter.Where(x => 
+      x.GuildSnowflake == config.GuildSnowflake &&
+      x.ConfigKey.Equals(config.ConfigKey)
+    );
+
+    await configsCollection.ReplaceOneAsync(filter, config, options: new ReplaceOptions() { IsUpsert = true });
+  
   }
 
   // Get all usernotes
