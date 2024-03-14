@@ -1,3 +1,4 @@
+using Arc3.Core.Ext;
 using Arc3.Core.Schema;
 using Arc3.Core.Schema.Ext;
 using Discord;
@@ -108,6 +109,20 @@ public class ModMailService : ArcService
         await m.CloseAsync(_clientInstance, _dbService);
     }
 
+    private async Task SaveModMailSession(ModMail m, SocketUser s) {
+        await m.SaveTranscriptAsync(_clientInstance, _dbService);
+        var channel = await m.GetChannel(_clientInstance);
+        var guild = channel.Guild;
+        var transcriptchannel = await _clientInstance.GetChannelAsync(ulong.Parse(_dbService.Config[guild.Id]["transcriptchannel"]));
+        var user = m.GetUser(_clientInstance);
+        var embed = new EmbedBuilder()
+            .WithModMailStyle(_clientInstance)
+            .WithTitle("Modmail Transcript")
+            .WithDescription($"**Modmail with:** {user.Mention}\n**Saved** <t:{DateTimeOffset.Now.ToUnixTimeSeconds()}:R> **by** {s.Mention}\n\n[Transcript](https://billiecord.com/modmail/transcripts/{m.Id})")
+            .Build();
+
+        await ((SocketTextChannel)transcriptchannel).SendMessageAsync(embed: embed);
+    }
     
     private async Task HandleMailChannelMessage(SocketMessage msg)
     {

@@ -194,4 +194,31 @@ public static class ModMailExt
         await channel.DeleteAsync();
     }
 
+    public static async Task SaveTranscriptAsync(this ModMail self, DiscordSocketClient client, DbService dbService) {
+        
+        var channel = await self.GetChannel(client);
+        var guild = channel.Guild;
+        var messages = channel.GetMessagesAsync(2000);
+        var transcripts = new List<Transcript>();
+
+        await messages.ForEachAsync(x => {
+            foreach (var message in x) {
+
+                var transcript = new Transcript {
+                    Id = message.Id.ToString(),
+                    ModMailId = self.Id,
+                    SenderSnowfake = ((long)message.Author.Id),
+                    AttachmentURls = message.Attachments.Select(x => x.ProxyUrl).ToArray(),
+                    CreatedAt = message.CreatedAt.UtcDateTime,
+                    GuildSnowflake = ((long)guild.Id)
+                };
+                
+                transcripts.Add(transcript);
+            }
+        });
+
+        await dbService.AddTranscriptsAsync(transcripts);
+
+    }
+
 }

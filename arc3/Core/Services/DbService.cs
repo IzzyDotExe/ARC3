@@ -179,4 +179,9 @@ public class DbService : ArcService {
     await mails.DeleteOneAsync(filter);
   }
   
+  public async Task AddTranscriptsAsync(List<Transcript> transcripts) {
+    IMongoCollection<Transcript> transcriptCollection = GetCollection<Transcript>("transcripts");
+    await transcriptCollection.InsertManyAsync(transcripts);
+  }
+
 }
