@@ -14,10 +14,9 @@ public class Transcript {
   public string ModMailId { get; set; }
 
   [BsonElement("sendersnowflake")]
-  public long SenderSnowfake { get; ;set; }
+  public long SenderSnowfake { get; set; }
 
   [BsonElement("attachments")]
-  [BsonRepresentation(BsonType.Array)]
   public string[] AttachmentURls { get; set; }
 
   [BsonElement("createdat")]
@@ -25,5 +24,8 @@ public class Transcript {
 
   [BsonElement("GuildSnowflake")]
   public long GuildSnowflake { get; set; }
+
+  [BsonElement("messagecontent")]
+  public string MessageContent { get; set; }
 
 }
