@@ -137,7 +137,7 @@ public class UtilityModule : ArcModule {
 
   }
 
-  [SlashCommand("SetConfig", "Set a config string for the guild")]
+  [SlashCommand("setconfig", "Set a config string for the guild")]
   public async Task SetConfigCommand(
     string configKey,
     string configValue
@@ -151,11 +151,11 @@ public class UtilityModule : ArcModule {
     } else {
 
       conf = new GuildConfig() {
-        Id = configs.Count + 1,
+        Id = (configs.Count + 1).ToString(),
         ConfigKey = configKey,
         ConfigValue = configValue,
-        GuildSnowflake = Context.Guild.Id
-      }
+        GuildSnowflake = ((long)Context.Guild.Id)
+      };
 
     }
 
@@ -163,13 +163,14 @@ public class UtilityModule : ArcModule {
 
     var embed = new EmbedBuilder()
       .WithTitle("Config was updated sucessfully")
-      .WithDescription($"```{configKey} ---> {configValue}```");
+      .WithDescription($"```{configKey} ---> {configValue}```")
+      .Build();
 
     await Context.Interaction.RespondAsync(embed: embed, ephemeral: true);
 
   }
 
-  [SlashCommand("GetConfig", "Get a config string for the guilds")]
+  [SlashCommand("getconfig", "Get a config string for the guilds")]
   public async Task GetConfigCommand(
     string configKey
   ) {
@@ -189,8 +190,9 @@ public class UtilityModule : ArcModule {
 
     var embed = new EmbedBuilder()
       .WithTitle($"Config for {Context.Guild.Name}")
-      .WithDescription(description);
-    
+      .WithDescription(description)
+      .Build();
+
     await Context.Interaction.RespondAsync(embed: embed, ephemeral: true);
 
   }
