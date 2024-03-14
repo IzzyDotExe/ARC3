@@ -210,7 +210,8 @@ public static class ModMailExt
                     SenderSnowfake = ((long)message.Author.Id),
                     AttachmentURls = message.Attachments.Select(x => x.ProxyUrl).ToArray(),
                     CreatedAt = message.CreatedAt.UtcDateTime,
-                    GuildSnowflake = ((long)guild.Id)
+                    GuildSnowflake = ((long)guild.Id),
+                    MessageContent = message.Content
                 };
                 
                 transcripts.Add(transcript);
