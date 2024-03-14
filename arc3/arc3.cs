@@ -45,11 +45,13 @@ namespace Arc3 {
         .AddSingleton<DbService>()
         .AddSingleton<PaginationService>()
         .AddSingleton<UptimeService>()
+        .AddSingleton<ModMailService>()
         .BuildServiceProvider();
 
       // Instantiate your services
       _interactions = _serviceProvider.GetRequiredService<InteractionService>();
       var dbService = _serviceProvider.GetRequiredService<DbService>();
+      var modmailService = _serviceProvider.GetRequiredService<ModMailService>();
 
       _client.InteractionCreated += async interaction => 
       {
