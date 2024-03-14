@@ -45,6 +45,7 @@ public class ModMailService : ArcService
         
         // Private messages are handled as from a user
         var mails = await _dbService.GetModMails();
+        
         if (!mails.Any(x=>(ulong)x.UserSnowflake == arg.Author.Id)) {
 
             // If there are no modmails in the database for this user, 
@@ -58,24 +59,60 @@ public class ModMailService : ArcService
 
             // TODO: Insert server picking mechanism
             // For now choose the default guild
+            var guild_id = Environment.GetEnvironmentVariable("GUILD_ID");
             ModMail? modmail = null;
             try {
-                var guild_id = Environment.GetEnvironmentVariable("GUILD_ID");
+
                 var guild = _clientInstance.GetGuild(ulong.Parse(guild_id??"0"));
                 modmail = new ModMail();
 
+                await modmail.InitAsync(_clientInstance, guild, arg.Author, _dbService);
+
             } catch {
                 
+                // TODO: Log Failure 
+
+                if (modmail != null) {
+                    var modmails = await _dbService.GetModMails();
+                    if (modmails.Any(x => x.Id == modmail.Id))
+                    await _dbService.RemoveModMail(modmail.Id);
+                }
+
             }
 
+
+        } else {
+
+            if (arg.Author.IsBot)
+                return;
+
+            var modmail = mails.First(x=>(ulong)x.UserSnowflake == arg.Author.Id);
+
+            if (arg.Content.ToLower().Equals("close session")) {
+                await SaveModMailSession(modmail, arg.Author);
+                await CloseModMailSession(modmail, arg.Author);
+                return;
+            }
+            
+            await modmail.SendMods(arg, _clientInstance);
 
         }
         
         
     }
+
+    private async Task CloseModMailSession(ModMail m, SocketUser user)
+    {
+        ActiveChannels.Remove(m.ChannelSnowflake);
+        await m.SendUserSystem(_clientInstance, $"Your mod mail session was closed by {user.Mention}!");
+        await m.CloseAsync(_clientInstance, _dbService);
+    }
+
     
     private async Task HandleMailChannelMessage(SocketMessage msg)
     {
+    
+        
         var mails = await _dbService.GetModMails();
         ModMail mail;
         try
