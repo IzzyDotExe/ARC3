@@ -1,4 +1,6 @@
+using System.Threading.Channels;
 using Arc3.Core.Ext;
+using Arc3.Core.Services;
 using Discord;
 using Discord.Webhook;
 using Discord.WebSocket;
@@ -145,16 +147,51 @@ public static class ModMailExt
         await channel.SendMessageAsync(embed:embed, components: buttons);
     }
 
-    public static bool InitAsync(this ModMail self, DiscordSocketClient clientInstance, SocketGuild guild, SocketUser user) {
-        
-        // TODO: Finish after guild config system.
+    public static async Task<bool> InitAsync(this ModMail self, DiscordSocketClient clientInstance, SocketGuild guild, SocketUser user, DbService dbService) {
 
         self.UserSnowflake = ((long)user.Id);
 
         if (guild is null)
             return false;
 
+        var guildConfig = dbService.Config[guild.Id];
+        var modmails = await dbService.GetModMails();
+        
+        if (modmails.Any(x => x.UserSnowflake == self.UserSnowflake))
+            return false;
+
+        if (!guildConfig.ContainsKey("modmailchannel"))
+            return false;
+        
+        var modmailChannelSnowflake = ulong.Parse(guildConfig["modmailchannel"]);
+        var mailCategory = guild.GetCategoryChannel(modmailChannelSnowflake);
+
+        if (!(mailCategory.GetChannelType() == ChannelType.Category))
+            return false;
+        
+        var mailChannel = await guild.CreateTextChannelAsync(
+            $"Modmail-{user.Username}",
+            x => {
+                x.ChannelType = ChannelType.Text;
+                x.CategoryId = mailCategory.Id;
+            }
+        );
+
+        var webhook = await mailChannel.CreateWebhookAsync(user.Username);
+
+        self.ChannelSnowflake = ((long)mailChannel.Id);
+        self.WebhookSnowflake = ((long)webhook.Id);
+
+        await dbService.AddModMail(self);
+
         return true;
         
     }
+
+    public static async Task CloseAsync(this ModMail self, DiscordSocketClient client, DbService dbService) {
+        await dbService.RemoveModMail(self.Id);
+        var channel = await self.GetChannel(client);
+        await channel.DeleteAsync();
+    }
+
 }
