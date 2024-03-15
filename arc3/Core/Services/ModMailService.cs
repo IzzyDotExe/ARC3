@@ -10,17 +10,130 @@ namespace Arc3.Core.Services;
 public class ModMailService : ArcService
 {
     
-    private List<long> ActiveChannels { get; }
-    
     private readonly DbService _dbService;
     
     public ModMailService(DiscordSocketClient clientInstance, InteractionService interactionService,
         DbService dbService)
         : base(clientInstance, interactionService, "MODMAIL")
     {
-        ActiveChannels = new List<long>();
         _dbService = dbService;
         clientInstance.MessageReceived += ClientInstanceOnMessageReceived;
+        clientInstance.ButtonExecuted += ButtonInteractionCreated;
+        clientInstance.ModalSubmitted += ModalInteractionCreated;
+    }
+
+    private async Task ModalInteractionCreated(SocketModal ctx) {
+        
+        var eventId = ctx.Data.CustomId;
+        String reason = ctx.Data.Components.First(x => x.CustomId == "modmail.ban.reason").Value;
+
+
+        if (!eventId.StartsWith("modmail"))
+            return;
+
+        var eventAction = _clientInstance.GetEventAction(eventId);
+
+        if (eventAction == null)
+            return;
+
+        var modmails = await _dbService.GetModMails();
+
+        ModMail modmail;
+
+        try {
+            modmail = modmails.First(x => x.Id == eventAction.Value.Item2);
+        } catch (InvalidDataException) {
+            // TODO: Log failed to get modmail
+            return;
+        }
+
+        switch (eventAction.Value.Item1) {
+            case "modmail.ban.confirm":
+                await ctx.DeferAsync();
+                var member = modmail.GetUser(_clientInstance);
+                await SaveModMailSession(modmail, ctx.User);
+                await CloseModMailSession(modmail, ctx.User);
+                await BanMailUser(member, reason, modmail);
+                break;
+        }
+
+        await ctx.RespondAsync("👍🏾", ephemeral: true);
+        
+    }
+
+    private async Task ButtonInteractionCreated(SocketMessageComponent ctx) {
+        
+        var eventId = ctx.Data.CustomId;
+
+        if (!eventId.StartsWith("modmail"))
+            return;
+
+        var eventAction = _clientInstance.GetEventAction(eventId);
+
+        if (eventAction == null)
+            return;
+        
+        var modmails = await _dbService.GetModMails();
+        var modmail = modmails.First(x=> x.Id == eventAction.Value.Item2);
+
+        switch (eventAction.Value.Item1) {
+
+            case "modmail.close":
+                await CloseModMailSession(modmail, ctx.User);
+                break;
+
+            case "modmail.save":
+                await SaveModMailSession(modmail, ctx.User);
+                await CloseModMailSession(modmail, ctx.User);
+                break;
+
+            case "modmail.ban":
+                await ConfirmBanUser(modmail, ctx);
+                break;
+
+            default:
+                break;
+
+        }
+
+    }
+
+    private async Task ConfirmBanUser(ModMail mail, SocketMessageComponent ctx) {
+        
+        var resp = new ModalBuilder()
+            .WithTitle("Are you sure you want to ban this user?")
+            .WithCustomId($"modmail.ban.confirm.{mail.Id}")
+            .AddTextInput(new TextInputBuilder()
+                .WithCustomId("modmail.ban.reason")
+                .WithPlaceholder("reason")
+                .WithRequired(true)
+                .WithMaxLength(30))
+            .Build();
+        
+        await ctx.RespondWithModalAsync(resp);
+
+    }
+
+    private async Task BanMailUser(SocketUser user, string reason, ModMail mail) {
+        var author = _clientInstance.CurrentUser;
+        var channel = await mail.GetChannel(_clientInstance);
+        var guild = channel.Guild;
+        var embed = new EmbedBuilder()
+            .WithModMailStyle(_clientInstance)
+            .WithAuthor(new EmbedAuthorBuilder()
+                .WithName(author.Username)
+                .WithIconUrl(author.GetAvatarUrl(ImageFormat.Auto)))
+                .WithDescription($"You have been banned in {guild.Name} for: ``{reason}``")
+                .Build();
+        
+        try {
+            await user.SendMessageAsync(embed: embed);
+        } catch {
+            // TODO: Log Failed message send
+        } finally {
+            await guild.AddBanAsync(user, reason: $"Banned during modmail for: {reason}");
+        }
+
     }
 
     private async Task ClientInstanceOnMessageReceived(SocketMessage arg)
@@ -67,16 +180,20 @@ public class ModMailService : ArcService
                 var guild = _clientInstance.GetGuild(ulong.Parse(guild_id??"0"));
                 modmail = new ModMail();
 
+                
                 await modmail.InitAsync(_clientInstance, guild, arg.Author, _dbService);
-
-            } catch {
+                await modmail.SendUserSystem(_clientInstance, "Your modmail request was recieved! Please wait and a staff member will assist you shortly.");
+                await modmail.SendModMailMenu(_clientInstance);
+                
+            } catch(Exception e) {
                 
                 // TODO: Log Failure 
+                Console.WriteLine(e);
 
                 if (modmail != null) {
                     var modmails = await _dbService.GetModMails();
-                    if (modmails.Any(x => x.Id == modmail.Id))
-                    await _dbService.RemoveModMail(modmail.Id);
+                    if (modmails.Any(x => x.Id == modmail.Id)) 
+                        await _dbService.RemoveModMail(modmail.Id);
                 }
 
             }
@@ -90,9 +207,11 @@ public class ModMailService : ArcService
             var modmail = mails.First(x=>(ulong)x.UserSnowflake == arg.Author.Id);
 
             if (arg.Content.ToLower().Equals("close session")) {
+                
                 await SaveModMailSession(modmail, arg.Author);
                 await CloseModMailSession(modmail, arg.Author);
                 return;
+
             }
             
             await modmail.SendMods(arg, _clientInstance);
@@ -104,7 +223,6 @@ public class ModMailService : ArcService
 
     private async Task CloseModMailSession(ModMail m, SocketUser user)
     {
-        ActiveChannels.Remove(m.ChannelSnowflake);
         await m.SendUserSystem(_clientInstance, $"Your mod mail session was closed by {user.Mention}!");
         await m.CloseAsync(_clientInstance, _dbService);
     }
@@ -136,7 +254,8 @@ public class ModMailService : ArcService
         }
         catch (InvalidOperationException ex)
         {
-            Console.WriteLine($"Failed to get modmail {ex}");
+            // No modmail exists
+            // Console.WriteLine($"Failed to get modmail {ex}");
             return;
         }
 
