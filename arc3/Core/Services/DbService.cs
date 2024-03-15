@@ -165,8 +165,6 @@ public class DbService : ArcService {
     
     IMongoCollection<ModMail> mails = GetCollection<ModMail>("mod_mails");
     
-    mail.Id = (await mails.CountDocumentsAsync(allFilter) + 1).ToString();
-    
     await mails.InsertOneAsync(mail);
     
   }
