@@ -2,6 +2,7 @@ using System.Threading.Channels;
 using Arc3.Core.Ext;
 using Arc3.Core.Services;
 using Discord;
+using Discord.Rest;
 using Discord.Webhook;
 using Discord.WebSocket;
 
@@ -14,10 +15,10 @@ public static class ModMailExt
         return user;
     }
 
-    public static async Task<SocketTextChannel> GetChannel(this ModMail self, DiscordSocketClient clientInstance) {
+    public static async Task<ITextChannel> GetChannel(this ModMail self, DiscordSocketClient clientInstance) {
         var channel = await clientInstance.GetChannelAsync((ulong)self.ChannelSnowflake);
-        return (SocketTextChannel)channel;
-    }
+        return (ITextChannel)channel;
+    }   
 
     public static async Task<IWebhook> GetWebhook(this ModMail self, DiscordSocketClient clientInstance)
     {
@@ -179,6 +180,7 @@ public static class ModMailExt
 
         var webhook = await mailChannel.CreateWebhookAsync(user.Username);
 
+        self.Id = Guid.NewGuid().ToString();
         self.ChannelSnowflake = ((long)mailChannel.Id);
         self.WebhookSnowflake = ((long)webhook.Id);
 
@@ -197,7 +199,9 @@ public static class ModMailExt
     public static async Task SaveTranscriptAsync(this ModMail self, DiscordSocketClient client, DbService dbService) {
         
         var channel = await self.GetChannel(client);
-        var guild = channel.Guild;
+        SocketGuild guild;
+        guild = client.GetGuild(channel.GuildId);
+        
         var messages = channel.GetMessagesAsync(2000);
         var transcripts = new List<Transcript>();
 
