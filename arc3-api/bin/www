@@ -4,7 +4,12 @@ const port = process.env.PORT || 3000;
 const dotenv = require('dotenv');
 dotenv.config();
 
+const dbUrl = process.env.MONGODB_URI;
+const mongoose = require('mongoose');
+
 (async () => {
+
+  await mongoose.connect(dbUrl);
 
   app.listen(port, () => {
     console.log('connected at port: ' + port);
