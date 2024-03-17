@@ -214,7 +214,7 @@ public class ModMailService : ArcService
 
             }
             
-            await modmail.SendMods(arg, _clientInstance);
+            await modmail.SendMods(arg, _clientInstance, _dbService);
 
         }
         
@@ -228,7 +228,7 @@ public class ModMailService : ArcService
     }
 
     private async Task SaveModMailSession(ModMail m, SocketUser s) {
-        await m.SaveTranscriptAsync(_clientInstance, _dbService);
+        // await m.SaveTranscriptAsync(_clientInstance, _dbService);
         var channel = await m.GetChannel(_clientInstance);
         var guild = channel.Guild;
         var transcriptchannel = await _clientInstance.GetChannelAsync(ulong.Parse(_dbService.Config[guild.Id]["transcriptchannel"]));
@@ -259,7 +259,7 @@ public class ModMailService : ArcService
             return;
         }
 
-        await mail.SendUserAsync(msg, _clientInstance);
+        await mail.SendUserAsync(msg, _clientInstance, _dbService);
     }
     
 }

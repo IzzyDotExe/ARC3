@@ -182,4 +182,9 @@ public class DbService : ArcService {
     await transcriptCollection.InsertManyAsync(transcripts);
   }
 
+  public async Task AddTranscriptAsync(Transcript transcript) {
+    IMongoCollection<Transcript> transcriptCollection = GetCollection<Transcript>("transcripts");
+    await transcriptCollection.InsertOneAsync(transcript);
+  }
+
 }
