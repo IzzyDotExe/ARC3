@@ -32,10 +32,44 @@ async function GetTranscripts(req, res) {
 async function GetMailIds(req, res) {
   try {
     let modmailIds = await Transcript.aggregate([
-      {$group: {"_id": {modmailId: "$modmailId", GuildSnowflake: {"$toString": "$GuildSnowflake"}}}}
+      { 
+        $group: {
+          "_id": {
+
+            modmailId: "$modmailId",
+
+            GuildSnowflake: {
+              "$toString": "$GuildSnowflake"
+            },
+
+          },
+          Participants: {
+            "$push": {
+              sendersnowflake: {
+                "$toString" : "$sendersnowflake"
+              }
+            }
+          },
+          Created: {
+            "$first": {
+              createdAt: "$createdat"
+            }
+          }     
+
+        },
+
+      }
     ]);
 
-    modmailIds = modmailIds.map(x => x["_id"])
+    modmailIds = modmailIds.map(x => {
+      return {
+        ...x["_id"],
+        participants: x["Participants"].map(x => x["sendersnowflake"]).filter((value, index, array) => {
+          return array.indexOf(value) === index;
+        }),
+        date: x["Created"]["createdAt"]
+      }
+    })
     
     res.status(200).json(modmailIds)
   } catch (e) {

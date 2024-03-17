@@ -41,7 +41,10 @@ async function GetUser(req, res) {
       res.status(200).json(discordCache[id]);
 
     }).catch(err => {
-      throw new Error(err);
+      res.status(500).json({
+        status: 500,
+        error: "An error occured, try again later!"
+      })  
     })
 
   } catch (err) {

@@ -22,30 +22,22 @@ function toggleSidebar() {
     sidebar.style.display = 'flex';
 }
 
-async function axiosGet(url, creds) {
-
-  if (!reqCache[url])
-    reqCache[url] = await axios.get(url);
-  
-  return reqCache[url].data;
-
-}
-
 function Message({data, key}) {
 
   const [user, setUser] = useState(null);
 
   const UserName = user ? user.username : "User";
-  const Avatar = user ? user.avatarUrl : "https://cdn.discordapp.com/avatars/964332892094341150/33ab55d7da71c325d56d820a7810ae15.png?size=1024";
-
+  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "https://cdn.discordapp.com/avatars/964332892094341150/33ab55d7da71c325d56d820a7810ae15.png?size=1024"; 
   const date = new Date(data.createdat);
   const formattedDate = date.toLocaleString('en-US', { timeZoneName: 'short' });
 
   useEffect(() => {
 
+    axios.get(`/api/discord/users/${data.sendersnowflake}/`).then(res => {
+      setUser(res.data);
+    })
 
-
-  }, [])
+  }, [data.sendersnowflake])
 
   return (
     <>
@@ -80,16 +72,19 @@ export default function Transcript() {
   const mailId = useParams()['*'];
   
   const [modmail, setModmail] = useState([]);
+  const [guild, setGuild] = useState(null);
 
-  const GuildIcon = "https://st3.depositphotos.com/17828278/33150/v/450/depositphotos_331503262-stock-illustration-no-image-vector-symbol-missing.jpg";
-  const SenderName = "SenderUsername";
-  const ServerName = "GuildName";
+  const GuildIcon = guild? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128` : "https://st3.depositphotos.com/17828278/33150/v/450/depositphotos_331503262-stock-illustration-no-image-vector-symbol-missing.jpg";
+  const ServerName = guild? guild.name : "GuildName";
 
   useEffect(() => {
     setSideBar(false);
     // Fetch all the messages from the transcript
     axios.get(`/api/transcripts/${mailId}/`).then(res => {
       setModmail(res.data);
+      axios.get(`/api/discord/guilds/${res.data[0].GuildSnowflake}/`).then(res => {
+        setGuild(res.data);
+      })
     });
 
   }, [mailId]);
@@ -105,7 +100,6 @@ export default function Transcript() {
 
         <div className="preamble__entries-container">
             <div className="preamble__entry">{ServerName}</div>
-            <div className="preamble__entry">{SenderName}</div>
             <div className="preamble__entry"><button onClick={toggleSidebar}>Transcripts</button></div>
             <div className="preamble__entry">{mailId}</div>
         </div>
