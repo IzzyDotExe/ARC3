@@ -64,7 +64,7 @@ namespace Arc3 {
       _client.Ready += ReadyAsync;
 
       // Get the token from our environment.
-      var token = Environment.GetEnvironmentVariable("TEST_TOKEN");
+      var token = Environment.GetEnvironmentVariable("TOKEN");
 
       // Login and start the bot
       await _client.LoginAsync(Discord.TokenType.Bot, token);
