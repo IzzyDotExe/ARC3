@@ -1,0 +1,15 @@
+.side-bar {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background-color: gray;
+  height: 100vh;
+}
+
+main {
+  min-height: 100vh;
+}
+
+.transcript-body {
+  min-height: 100vh;
+}
