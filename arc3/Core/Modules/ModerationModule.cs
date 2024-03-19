@@ -5,6 +5,7 @@ using Arc3.Core.Services;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
+using Discord.Net;
 using Discord.WebSocket;
 
 namespace Arc3.Core.Modules;
@@ -153,7 +154,67 @@ public class ModerationModule : ArcModule
   
   # region Jail
   
+  [UserCommand("Jail User"), SlashCommand("jail", "Send a user to jail")]
+  public async Task JailUser(SocketUser user) {
   
+    // Fetch the interaction and defer it.
+    var ctx = Context.Interaction; 
+    await ctx.DeferAsync(true);
+    
+    // Get all the jails.
+    var jails = await DbService.GetJailsAsync();
+
+    /* Guard so that the user is not already jailed */
+    if (jails.Any(x => x.UserSnowflake == (long)user.Id)) {
+      await ctx.FollowupAsync("Could not jail that user! They might be already jailed.", ephemeral: true);
+      return;
+    }
+    /* Guard */
+    
+    // Create your jail and initialize it.
+    var jail = new Jail();
+    await jail.InitAsync(_clientInstance, Context.Guild, user, DbService);
+    
+    // Send feedback.
+    await ctx.FollowupAsync($"{user.Mention} was jailed!", ephemeral: true);
+
+  }
+
+  
+  [UserCommand("Unjail User"), SlashCommand("unjail", "Take a user out of jail")]
+  public async Task UnjailUser(SocketUser user)
+  {
+    
+    // Fetch the interaction and defer it.
+    var ctx = Context.Interaction; 
+    await ctx.DeferAsync(true);
+    
+    // Get all the jails.
+    var jails = await DbService.GetJailsAsync();
+    
+    /* Guard so that the user is actually jailed */
+    if (jails.All(x => x.UserSnowflake != (long)user.Id))
+    {
+      // If they are not the send the error
+      await ctx.FollowupAsync("Could not unjail that user! They might not be jailed.", ephemeral: true);
+      return;
+    }
+    
+    // Delete the jail
+    var jail = jails.First(x => x.UserSnowflake == (long)user.Id);
+    await jail.DestroyAsync(_clientInstance, DbService);
+    
+    try
+    {
+      await ctx.FollowupAsync($"{user.Mention} was unjailed!", ephemeral: true);
+    } catch (HttpException e)
+    {
+      await ctx.User.SendMessageAsync($"{user.Mention} was unjailed!");
+    }
+   
+
+  }
+
   #endregion
 
 }
