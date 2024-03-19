@@ -77,6 +77,13 @@ public class DbService : ArcService {
     return await configs.ToListAsync();
   }
 
+  public async Task<IEnumerable<T>> GetItemsAsync<T>(string collection)
+  {
+    var itemColletion = GetCollection<T>(collection);
+    var items = await itemColletion.FindAsync(Builders<T>.Filter.Where(x => true));
+    return await items.ToListAsync();
+  }
+
   public List<GuildConfig> GetGuildConfigs() {
     var configsCollection = GetCollection<GuildConfig>("guild_configs");
     var filter = Builders<GuildConfig>.Filter.Where(x => true);
@@ -185,6 +192,38 @@ public class DbService : ArcService {
   public async Task AddTranscriptAsync(Transcript transcript) {
     IMongoCollection<Transcript> transcriptCollection = GetCollection<Transcript>("transcripts");
     await transcriptCollection.InsertOneAsync(transcript);
+  }
+
+  public async Task<List<Jail>> GetJailsAsync() {
+    
+    // Get the jails colleciton
+    var jailCollection = GetCollection<Jail>("jails");
+
+    var filter = Builders<Jail>.Filter.Where(x=>true);
+
+    var jails = await jailCollection.FindAsync(filter);
+
+    return await jails.ToListAsync();
+
+  }
+
+  public async Task AddJailAsync(Jail jail) {
+
+    var allFilter = Builders<Jail>.Filter.Where(x => true);
+
+    IMongoCollection<Jail> jails = GetCollection<Jail>("jails");
+
+    await jails.InsertOneAsync(jail);
+    
+  }
+
+  public async Task DeleteJailAsync(Jail jail)
+  {
+
+    var jails = GetCollection<Jail>("jails");
+    var filter = Builders<Jail>.Filter.Where(x => x.Id == jail.Id);
+    await jails.DeleteOneAsync(filter);
+
   }
 
 }
