@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "type": "dotnet",
+            "name": "Dotnet configuration",
+            "environment": {
+                "MONGODB_URI": "mongodb://root:rootpassword@localhost:27017/Arc3?authSource=admin",
+                "TOKEN": "NzA3MjgwMDgxNTI1MDE0NjUw.Gtd7T4.G-KltKPyZaB6dGZchlleOflfblWeFYB2czC7uA"
+            },
+            "projectPath": "./Arc3/arc3.csproj",
+            "workingDir": "./",
+            "args": [],
+        },
+        
+    ]
+}
