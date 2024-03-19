@@ -108,9 +108,9 @@ public class UtilityModule : ArcModule {
 
   [SlashCommand("avatar", "Get the avatar of the user")]
   public async Task AvatarCommand(
-    SocketUser? user
+    SocketUser? user = null
   ) {
-
+    
     if (user is null) {
       user = Context.User;
     }
