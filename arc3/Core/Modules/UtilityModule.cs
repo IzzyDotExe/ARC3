@@ -8,7 +8,6 @@ using Discord.WebSocket;
 using ZstdSharp.Unsafe;
 using System.Runtime.InteropServices;
 using MongoDB.Bson;
-using Discord.Commands;
 using Arc3.Core.Schema;
 using System.Data.Common;
 
@@ -197,4 +196,31 @@ public class UtilityModule : ArcModule {
 
   }
 
+  [SlashCommand("embedsimple", "Create an embed message"), RequireUserPermission(GuildPermission.Administrator)]
+  public async Task EmbedCommand(string title, string description, string color, string thumbnail, string image, string? id = null)
+  {
+  
+    // TODO: Add saving.
+    //    if (id is not null)
+    //    {
+    //      
+    //    }
+    
+    var embed = new EmbedBuilder()
+      .WithTitle(title)
+      .WithDescription(description)
+      .WithColor(new Color(Convert.ToUInt32(color, 16)))
+      .WithThumbnailUrl(thumbnail)
+      .WithImageUrl(image)
+      .Build();
+    
+    await Context.Channel.SendMessageAsync(embed:embed);
+    await Context.Interaction.RespondAsync("Sent!")
+//    if (id is null)
+//   ;
+//    else
+//      await Context.Interaction.RespondAsync("Sent and saved!");
+//    
+  }
+  
 }
