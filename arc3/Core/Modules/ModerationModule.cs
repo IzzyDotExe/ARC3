@@ -3,7 +3,7 @@ using Arc3.Core.Schema;
 using Arc3.Core.Schema.Ext;
 using Arc3.Core.Services;
 using Discord;
-using Discord.Commands;
+
 using Discord.Interactions;
 using Discord.Net;
 using Discord.WebSocket;
@@ -113,7 +113,8 @@ public class ModerationModule : ArcModule
 
   }
 
-  [UserCommand("User Notes")]
+  [UserCommand("User Notes"),
+   RequireUserPermission(GuildPermission.ManageMessages)]
   public async Task UserNotes(SocketUser user) {
 
 
@@ -154,7 +155,9 @@ public class ModerationModule : ArcModule
   
   # region Jail
   
-  [UserCommand("Jail User"), SlashCommand("jail", "Send a user to jail")]
+  [UserCommand("Jail User"), 
+   SlashCommand("jail", "Send a user to jail"),
+   RequireUserPermission(GuildPermission.MuteMembers)]
   public async Task JailUser(SocketUser user) {
   
     // Fetch the interaction and defer it.
@@ -181,7 +184,9 @@ public class ModerationModule : ArcModule
   }
 
   
-  [UserCommand("Unjail User"), SlashCommand("unjail", "Take a user out of jail")]
+  [UserCommand("Unjail User"), 
+   SlashCommand("unjail", "Take a user out of jail"),
+   RequireUserPermission(GuildPermission.MuteMembers)]
   public async Task UnjailUser(SocketUser user)
   {
     

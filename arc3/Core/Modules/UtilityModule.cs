@@ -136,7 +136,8 @@ public class UtilityModule : ArcModule {
 
   }
 
-  [SlashCommand("setconfig", "Set a config string for the guild")]
+  [SlashCommand("setconfig", "Set a config string for the guild"),
+   RequireUserPermission(GuildPermission.ManageGuild)]
   public async Task SetConfigCommand(
     string configKey,
     string configValue
@@ -169,7 +170,8 @@ public class UtilityModule : ArcModule {
 
   }
 
-  [SlashCommand("getconfig", "Get a config string for the guilds")]
+  [SlashCommand("getconfig", "Get a config string for the guilds"),
+   RequireUserPermission(GuildPermission.ManageGuild)]
   public async Task GetConfigCommand(
     string configKey
   ) {
@@ -196,7 +198,8 @@ public class UtilityModule : ArcModule {
 
   }
 
-  [SlashCommand("embedsimple", "Create an embed message"), RequireUserPermission(GuildPermission.Administrator)]
+  [SlashCommand("embedsimple", "Create an embed message"), 
+   RequireUserPermission(GuildPermission.Administrator)]
   public async Task EmbedCommand(string title, string description, string color, string thumbnail, string image, string? id = null)
   {
   
@@ -215,7 +218,7 @@ public class UtilityModule : ArcModule {
       .Build();
     
     await Context.Channel.SendMessageAsync(embed:embed);
-    await Context.Interaction.RespondAsync("Sent!")
+    await Context.Interaction.RespondAsync("Sent!");
 //    if (id is null)
 //   ;
 //    else
