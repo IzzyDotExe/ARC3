@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Discord;
 using System.Reflection;
 using Arc3.Core.Services;
+using arc3.Core.Services;
 
 namespace Arc3 {
 
@@ -46,10 +47,12 @@ namespace Arc3 {
         .AddSingleton<PaginationService>()
         .AddSingleton<UptimeService>()
         .AddSingleton<ModMailService>()
+        .AddSingleton<SocketCommService>()
         .BuildServiceProvider();
 
       // Instantiate your services
       _interactions = _serviceProvider.GetRequiredService<InteractionService>();
+      var socketComms = _serviceProvider.GetRequiredService<SocketCommService>();
       var dbService = _serviceProvider.GetRequiredService<DbService>();
       var modmailService = _serviceProvider.GetRequiredService<ModMailService>();
 
