@@ -9,10 +9,16 @@ public class Appeal {
   [BsonRepresentation(BsonType.String)]
   public string Id { get; set; } = String.Empty;
 
-  [BsonElement("usersnowflake")]
+  [BsonElement("userSnowflake")]
   public long UserSnowflake { get; set; }
 
   [BsonElement("nextappeal")]
   public long NextAppeal { get; set; }
+  
+  [BsonElement("bannedBy")]
+  public string BannedBy { get; set; }
+  
+  [BsonElement("appealContent")]
+  public string AppealContent { get; set; }
 
 }
