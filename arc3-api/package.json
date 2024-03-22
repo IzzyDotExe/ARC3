@@ -12,11 +12,16 @@
     "axios": "^1.6.8",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.4",
+    "escape-html": "^1.0.3",
     "express": "^4.18.2",
+    "express-validator": "^7.0.1",
     "forever": "^4.0.3",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.2",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "socket.io-client": "^4.7.5",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"
