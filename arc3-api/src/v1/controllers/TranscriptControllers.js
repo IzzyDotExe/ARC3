@@ -1,12 +1,14 @@
 const Transcript = require('../db/Transcript.js');
 
 async function GetTranscripts(req, res) {
+
   const modmailID = req.params.mailId;
 
   // Guard if the modmail id is undefined
   if (modmailID === undefined) {
     res.status(404);
     res.json({'status': 404, 'error': 'Could not find that modmail'});
+    return;
   }
 
   // Try and get the transcripts and send them
@@ -30,6 +32,7 @@ async function GetTranscripts(req, res) {
 }
 
 async function GetMailIds(req, res) {
+
   try {
     let modmailIds = await Transcript.aggregate([
       { 
@@ -81,6 +84,7 @@ async function GetMailIds(req, res) {
       'error': 'An Error occured. Please try again later.'
     });
   }
+
 }
 
 module.exports = { GetTranscripts, GetMailIds };
