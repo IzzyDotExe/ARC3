@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import Home from './routes/Home';
 import Transcript from './routes/Transcript';
 import Transcripts from './routes/Transcripts';
+import Appeal from './routes/Appeal'
 
 const router = createBrowserRouter(
   [
@@ -25,6 +26,11 @@ const router = createBrowserRouter(
           element: <Transcript/>
         }
       ]
+    },
+
+    {
+      path: "/appeal",
+      element: <Appeal />
     }
 
   ]
