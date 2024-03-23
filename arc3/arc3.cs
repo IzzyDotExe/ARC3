@@ -47,12 +47,13 @@ namespace Arc3 {
         .AddSingleton<PaginationService>()
         .AddSingleton<UptimeService>()
         .AddSingleton<ModMailService>()
-        .AddSingleton<SocketCommService>()
+        // .AddSingleton<SocketCommService>()
         .BuildServiceProvider();
 
       // Instantiate your services
       _interactions = _serviceProvider.GetRequiredService<InteractionService>();
-      var socketComms = _serviceProvider.GetRequiredService<SocketCommService>();
+      // TODO: Figure out Socket comms
+      // var socketComms = _serviceProvider.GetRequiredService<SocketCommService>();
       var dbService = _serviceProvider.GetRequiredService<DbService>();
       var modmailService = _serviceProvider.GetRequiredService<ModMailService>();
 

@@ -12,7 +12,7 @@ namespace arc3.Core.Services;
 public class SocketCommService : ArcService {
   private readonly DbService _dbService;
 
-  private Socket _socketListner;
+  private TcpListener _serverListener;
 
   public SocketCommService(DiscordSocketClient clientInstance, InteractionService interactionService,
     DbService dbService)
@@ -24,41 +24,35 @@ public class SocketCommService : ArcService {
 
       IPEndPoint endp = new(ipAddr, 8018);
 
-      _socketListner = new Socket(
-        endp.AddressFamily,
-        SocketType.Stream,
-        ProtocolType.Tcp
-      );
+      _serverListener = new TcpListener(IPAddress.Parse("127.0.0.1"), 8018);
 
-      _socketListner.Bind(endp);
-      _socketListner.Listen(5);
+      _serverListener.Start();
 
       Task.Run(AcceptConnections);
 
     }
 
-
-  public async Task AcceptConnections() {
-
-
-    Console.WriteLine("SOCKET SERVER CREATED!");
+  private async Task AcceptConnections() {
 
     while (true) {
       
-      Socket clientSocket = await _socketListner.AcceptAsync();
+      TcpClient client = await _serverListener.AcceptTcpClientAsync();
+      NetworkStream stream = client.GetStream();
 
-      byte[] temp = new byte[1024];
-      int clientBytes = clientSocket.Receive(temp);
-      string clientMessage = Encoding.ASCII.GetString(temp, 0, clientBytes);
+      while (!stream.DataAvailable);
 
+      byte[] clientBytes = new byte[client.Available];
+      await stream.ReadAsync(clientBytes, 0, clientBytes.Length);
+      
+      string clientMessage = Encoding.ASCII.GetString(clientBytes);
+      
       Console.WriteLine(clientMessage);
-
-      clientSocket.Shutdown(SocketShutdown.Both);
-      clientSocket.Close();
-
+      Console.WriteLine("end client message");
+      
+      client.Dispose();
     }
 
-    _socketListner.Close();
+    _serverListener.Dispose();;
 
   }
 
