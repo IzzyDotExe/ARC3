@@ -1,0 +1,113 @@
+.appeal {
+  background-color: gray;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  padding: 20px;
+  border-radius: 15px;
+  border: solid white 5px;
+}
+
+.titlesec {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.titlesec * {
+  padding: 10px;
+}
+
+.appeal img {
+  border-radius: 50%;
+  width: 50px;
+}
+
+.infosec {
+  display: flex;
+  flex-direction: column;
+}
+
+.infosec > p {
+  font-weight: bolder;
+}
+
+.info {
+  background-color: white;
+  border: black solid 2px;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+
+.commentsec {
+  padding: 10px 0;
+}
+
+.buttons {
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.danger {
+  background-color: rgb(155, 34, 34);
+}
+
+.primary {
+  background-color: rgb(134, 62, 163);
+}
+
+.secondary {
+  background-color: rgb(56, 76, 156);
+}
+
+.danger:hover {
+  background-color: rgb(135, 14, 14);
+}
+
+.primary:hover {
+  background-color: rgb(114, 42, 143);
+}
+
+.secondary:hover {
+  background-color: rgb(36, 56, 136);
+}
+
+
+.button {
+  border-radius: 7px;
+  padding: 10px;
+}
+
+.comment > div {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.comment > div > p {
+  font-weight: bolder;
+  padding-left: 10px;
+}
+
+.comment {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment textarea {
+  align-self: center;
+  width: 100%;
+  height: 100px;
+  margin: 10px 0;
+}
+
+.comment a {
+  width: fit-content;
+  align-self: flex-end;
+  justify-self: right;
+}

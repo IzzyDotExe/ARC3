@@ -8,6 +8,7 @@ import Home from './routes/Home';
 import Transcript from './routes/Transcript';
 import Transcripts from './routes/Transcripts';
 import Appeal from './routes/Appeal'
+import Appeals from './routes/Appeals'
 
 const router = createBrowserRouter(
   [
@@ -26,6 +27,11 @@ const router = createBrowserRouter(
           element: <Transcript/>
         }
       ]
+    },
+
+    {
+      path: "/appeals",
+      element: <Appeals />
     },
 
     {
