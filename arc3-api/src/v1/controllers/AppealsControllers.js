@@ -2,6 +2,7 @@ const Appeal = require('../db/Appeal.js');
 const escape = require('escape-html');
 const uuid = require('uuid');
 const net = require('net');
+const io = require('socket.io-client');
 
 const clean = str =>  str.replace(/[^\x00-\x7F]/g, "");
 
@@ -82,29 +83,13 @@ async function SubmitAppeal(req, res) {
         nextappeal: date2.getTime()
     });
     
+    appeal.save();
 
-    const client = new net.Socket();
-
-   client.connect(8018, 'localhost', () => {
-        console.log("connected");   
-        client.write(JSON.stringify(
-            {
-                command: "appeal.submit",
-                data: appeal
-            }
-        ))
-        appeal.save();
-
-        res.status(200)
-        res.json({
-            status: 200,
-            message: "success"
-        });
-    })
-
-    client.on('close', () => {
-        console.log('closed')
-    })
+    res.status(200)
+    res.json({
+        status: 200,
+        message: "success"
+    });
     
 }
 
