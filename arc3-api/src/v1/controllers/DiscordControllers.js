@@ -16,6 +16,23 @@ const discordCache = {
 
 }
 
+async function GetMe(req, res) {
+  try {
+
+    const self = await req.state.self();
+    res.status(200).json(self);
+
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      status: 500,
+      error: 'An error occured try again later!'
+    })
+  }
+
+
+}
+
 async function GetUser(req, res) {
 
   const id = req.params.id;
@@ -102,4 +119,4 @@ async function GetGuild(req, res) {
 
 }
 
-module.exports = { GetUser, GetGuild }; 
+module.exports = { GetUser, GetGuild, GetMe }; 
