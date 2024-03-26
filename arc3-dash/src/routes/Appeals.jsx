@@ -6,7 +6,7 @@ import axios from 'axios'
 import Appeal from '../components/Appeal'
 
 
-export default function Appeals() {
+export default function Appeals({ self }) {
 
   const [appeals, setAppeals] = useState([]);
 
@@ -22,7 +22,7 @@ export default function Appeals() {
           <div className="App">
               <Navbar/>
               <main>
-                {appeals.map(x => <Appeal data={x} />)}
+                {appeals.map(x => <Appeal self={self} data={x} />)}
               </main>
           </div>
       

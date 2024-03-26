@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 
-export default function Appeal({ data }) {
+export default function Appeal({ self, data }) {
 
   const [user, setUser] = useState(null);
 
@@ -13,8 +13,10 @@ export default function Appeal({ data }) {
   const date = new Date(data.nextappeal);
   const formattedDate = date.toLocaleString('en-US', { timeZoneName: 'short' });
 
-  useEffect(() => {
+  const selfName = self? self.username : "User";
+  const selfav = self ? `https://cdn.discordapp.com/avatars/${self.id}/${self.avatar}.png?size=1024` : "https://cdn.discordapp.com/avatars/964332892094341150/33ab55d7da71c325d56d820a7810ae15.png?size=1024"; 
 
+  useEffect(() => {
     axios.get(`/api/discord/users/${data.userSnowflake}/`).then(res => {
       setUser(res.data);
     })
@@ -48,8 +50,8 @@ export default function Appeal({ data }) {
         </div>
         <div className="comment">
           <div>
-            <img src="https://cdn.discordapp.com/avatars/964332892094341150/33ab55d7da71c325d56d820a7810ae15.png?size=1024" alt="" />
-            <p>myusername</p>
+            <img src={selfav} alt="" />
+            <p>Commenting as {selfName}</p>
           </div>
 
           <textarea name="" id="" cols="30" rows="10"></textarea>
