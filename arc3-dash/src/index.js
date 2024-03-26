@@ -4,49 +4,68 @@ import './App.css';
 import { createBrowserRouter, RouterProvider} from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 
+import axios from 'axios';
+
 import Home from './routes/Home';
 import Transcript from './routes/Transcript';
 import Transcripts from './routes/Transcripts';
 import Appeal from './routes/Appeal'
 import Appeals from './routes/Appeals'
 
-const router = createBrowserRouter(
-  [
-    
-    {
-      path: "/",
-      element: <Home/>
-    },
-    
-    {
-      path: "/transcripts",
-      element: <Transcripts/>,
-      children: [
-        {
-          path: "*",
-          element: <Transcript/>
-        }
-      ]
-    },
+function App() {
 
-    {
-      path: "/appeals",
-      element: <Appeals />
-    },
+  const [self, setSelf] = React.useState(null);
+  
 
-    {
-      path: "/appeal",
-      element: <Appeal />
-    }
+  React.useEffect(() => {
+    axios.get('/api/discord/me').then(res => {
+      setSelf(res.data);
+    })
+  }, [setSelf])
 
-  ]
-);
+
+  const router = createBrowserRouter(
+    [
+      
+      {
+        path: "/",
+        element: <Home/>
+      },
+      
+      {
+        path: "/transcripts",
+        element: <Transcripts/>,
+        children: [
+          {
+            path: "*",
+            element: <Transcript/>
+          }
+        ]
+      },
+  
+      {
+        path: "/appeals",
+        element: <Appeals self={self}/>
+      },
+  
+      {
+        path: "/appeal",
+        element: <Appeal />
+      }
+  
+    ]
+  );
+  
+  return (
+    <React.StrictMode>
+      <RouterProvider router={router}/>
+    </React.StrictMode>
+  );
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <RouterProvider router={router}/>
-  </React.StrictMode>
+  <App />
 );
 
 // If you want to start measuring performance in your app, pass a function
