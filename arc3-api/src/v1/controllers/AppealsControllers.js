@@ -100,6 +100,10 @@ async function GetAppeal(req, res) {
     // Guard if the id is undefined
     if (id === undefined) {
 
+        res.status(400).json({
+            status: 400,
+            message: "Invalid id"
+        })
         return;
     }
     
