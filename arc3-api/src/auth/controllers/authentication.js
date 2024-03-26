@@ -62,7 +62,7 @@ async function CallbackRoute(req, res) {
 // Delete the session token
 function RevokeRoute(req, res) {
 
-  req.cookies.set('session');
+  res.cookie('session', 'null', {maxAge: -1})
   res.redirect('/');
 
 }
