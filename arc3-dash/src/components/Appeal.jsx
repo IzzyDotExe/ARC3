@@ -2,11 +2,43 @@ import Navbar from '../components/Navbar'
 import './Appeal.css'
 import { useState, useEffect } from 'react' 
 import axios from 'axios'
+import unescape from 'unescape'
 
+function Comment({data}) {
+
+  const [user, setUser] = useState(null);
+  const contents = data.commentContents;
+
+  const UserName = user ? user.username : "User";
+  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "/blank-avatar.jpg"; 
+  const date = new Date(data.commentDate);
+  const formattedDate = date.toLocaleString('en-US', { timeZoneName: 'short' });
+
+  useEffect(() => {
+    axios.get(`/api/discord/users/${data.userSnowflake}/`).then(res => {
+      setUser(res.data);
+    })
+
+  }, [data.userSnowflake])
+
+  return (          
+    <div className="comment">
+      <div>
+        <p>{UserName}</p>
+        <img src={Avatar} alt="" />
+      </div>
+      <div>
+        {unescape(contents)}
+      </div>
+    </div>
+  )
+}
 
 export default function Appeal({ self, data }) {
 
   const [user, setUser] = useState(null);
+  const [dropdown, setDropdown] = useState(false);
+  const [comments, setComments] = useState([]);
 
   const UserName = user ? user.username : "User";
   const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "/blank-avatar.jpg"; 
@@ -17,11 +49,16 @@ export default function Appeal({ self, data }) {
   const selfav = self ? `https://cdn.discordapp.com/avatars/${self.id}/${self.avatar}.png?size=1024` : "/blank-avatar.jpg"; 
 
   useEffect(() => {
+
     axios.get(`/api/discord/users/${data.userSnowflake}/`).then(res => {
       setUser(res.data);
     })
 
-  }, [data.userSnowflake])
+    axios.get(`/api/appeals/${data._id}/comments`).then(res => {
+      setComments(res.data);
+    })
+
+  }, [data.userSnowflake, data._id])
 
 
   return (
@@ -47,15 +84,22 @@ export default function Appeal({ self, data }) {
           <a className="button secondary">✉️ Mail</a>
         </div>
         <div className="comments">
+          <h2>Comments</h2>
+          {dropdown && comments.map(data => <Comment data={data}/>)}
+          {!dropdown && <a onClick={() => {setDropdown(val => !val)}></a>}
         </div>
-        <div className="comment">
+        <div className="commentfield">
+      
           <div>
             <img src={selfav} alt="" />
             <p>Commenting as {selfName}</p>
           </div>
 
-          <textarea name="" id="" cols="30" rows="10"></textarea>
-          <a className="button secondary">Send</a>
+          <form method="POST" action={`/api/appeals/${data._id}/comments`}>
+            <textarea name="content" id="content" cols="30" rows="10"></textarea>
+            <button type="submit" className="button secondary">Send</button>
+          </form>
+
         </div>
       </div>
     </section>

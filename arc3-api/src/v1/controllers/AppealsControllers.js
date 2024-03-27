@@ -38,6 +38,7 @@ async function SubmitAppeal(req, res) {
             status: 400,
             error: "Failed to submit, fill in all fields."
         });
+        return;
     }
 
     // Escape and Validate data
