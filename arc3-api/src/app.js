@@ -2,12 +2,14 @@ const express = require('express');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser')
 const app = express();
-
+const fs = require('fs');
 const authenticated = require('./auth/middlewares/authenticated.js');
 const whitelist = require('./auth/middlewares/whitelist.js');
 
 const v1 = require('./v1/v1.js');
 const auth = require('./auth/auth.js');
+
+const STATIC_FILES = fs.readdirSync(process.env.BUILD_PATH);
 
 app.use(
   helmet({
@@ -39,7 +41,15 @@ app.get('/transcripts/*', authenticated, whitelist, (req, res) => {
 
 // Authenticate the rest of the client.
 app.get('/*', authenticated,  (req, res) => {
+
+  const file = req.path.split('/')[1];
+  if (STATIC_FILES.includes(file)) {
+    res.sendFile(file, {root: process.env.BUILD_PATH?? "./build"})
+    return;
+  }
+
   res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
+
 });
 
 module.exports = app;

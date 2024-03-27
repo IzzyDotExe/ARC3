@@ -27,7 +27,7 @@ function Message({data, key}) {
   const [user, setUser] = useState(null);
 
   const UserName = user ? user.username : "User";
-  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "https://cdn.discordapp.com/avatars/964332892094341150/33ab55d7da71c325d56d820a7810ae15.png?size=1024"; 
+  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "/blank-avatar.jpg"; 
   const date = new Date(data.createdat);
   const formattedDate = date.toLocaleString('en-US', { timeZoneName: 'short' });
 
@@ -74,7 +74,7 @@ export default function Transcript() {
   const [modmail, setModmail] = useState([]);
   const [guild, setGuild] = useState(null);
 
-  const GuildIcon = guild? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128` : "https://st3.depositphotos.com/17828278/33150/v/450/depositphotos_331503262-stock-illustration-no-image-vector-symbol-missing.jpg";
+  const GuildIcon = guild? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128` : "/missing.jpg"; 
   const ServerName = guild? guild.name : "GuildName";
 
   useEffect(() => {

@@ -43,7 +43,7 @@ function User({userid}) {
 
   const [user, setUser] = useState(null);
 
-  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128` : "https://cdn.discordapp.com/avatars/964332892094341150/33ab55d7da71c325d56d820a7810ae15.png?size=128"; 
+  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128` : "/blank-avatar.jpg"; 
   const UserName = user ? user.username : "User";
 
   useEffect(() => {

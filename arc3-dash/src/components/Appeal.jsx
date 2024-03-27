@@ -9,12 +9,12 @@ export default function Appeal({ self, data }) {
   const [user, setUser] = useState(null);
 
   const UserName = user ? user.username : "User";
-  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "https://cdn.discordapp.com/avatars/964332892094341150/33ab55d7da71c325d56d820a7810ae15.png?size=1024"; 
+  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "/blank-avatar.jpg"; 
   const date = new Date(data.nextappeal);
   const formattedDate = date.toLocaleString('en-US', { timeZoneName: 'short' });
 
   const selfName = self? self.username : "User";
-  const selfav = self ? `https://cdn.discordapp.com/avatars/${self.id}/${self.avatar}.png?size=1024` : "https://cdn.discordapp.com/avatars/964332892094341150/33ab55d7da71c325d56d820a7810ae15.png?size=1024"; 
+  const selfav = self ? `https://cdn.discordapp.com/avatars/${self.id}/${self.avatar}.png?size=1024` : "/blank-avatar.jpg"; 
 
   useEffect(() => {
     axios.get(`/api/discord/users/${data.userSnowflake}/`).then(res => {
