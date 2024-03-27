@@ -1,6 +1,6 @@
 import Navbar from '../components/Navbar'
 import './Appeal.css'
-import { useState, useEffect } from 'react' 
+import { useState, useEffect, useCallback } from 'react' 
 import axios from 'axios'
 import unescape from 'unescape'
 
@@ -48,6 +48,10 @@ export default function Appeal({ self, data }) {
   const selfName = self? self.username : "User";
   const selfav = self ? `https://cdn.discordapp.com/avatars/${self.id}/${self.avatar}.png?size=1024` : "/blank-avatar.jpg"; 
 
+  const openComment = useCallback(() => {
+    setDropdown(val => !val);
+  }, []);
+
   useEffect(() => {
 
     axios.get(`/api/discord/users/${data.userSnowflake}/`).then(res => {
@@ -85,8 +89,9 @@ export default function Appeal({ self, data }) {
         </div>
         <div className="comments">
           <h2>Comments</h2>
+          <button onClick={openComment}>{!dropdown? "Open comments" : "Close comments"}</button>
           {dropdown && comments.map(data => <Comment data={data}/>)}
-          {!dropdown && <a onClick={() => {setDropdown(val => !val)}></a>}
+          
         </div>
         <div className="commentfield">
       
