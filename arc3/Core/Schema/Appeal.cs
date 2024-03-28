@@ -21,4 +21,7 @@ public class Appeal {
   [BsonElement("appealContent")]
   public string AppealContent { get; set; }
 
+  [BsonElement("action")]
+  public string Action { get; set; }
+
 }

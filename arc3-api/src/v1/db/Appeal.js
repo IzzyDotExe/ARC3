@@ -4,6 +4,7 @@ const AppealSchema = new mongoose.Schema({
     _id: String,
     userSnowflake: String,
     bannedBy: String,
+    action: String,
     appealContent: String,
     nextappeal: String
 });
