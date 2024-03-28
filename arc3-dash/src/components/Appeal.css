@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   width: fit-content;
+  max-width: 580px;
   height: fit-content;
   padding: 20px;
   border-radius: 15px;
@@ -31,6 +32,13 @@
   flex-direction: column;
 }
 
+.contents > p{
+  text-align: left;
+  justify-self: left;
+  font-weight: 100;
+  margin: 0;
+}
+
 .infosec > p {
   font-weight: bolder;
 }
@@ -42,6 +50,11 @@
   padding: 0 10px;
 }
 
+
+.info > p {
+  max-width: 500px;
+}
+
 .commentsec {
   padding: 10px 0;
 }
@@ -51,6 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  cursor: pointer;
 }
 
 .danger {
@@ -76,7 +90,6 @@
 .secondary:hover {
   background-color: rgb(36, 56, 136);
 }
-
 
 .button {
   border-radius: 7px;
@@ -116,29 +129,34 @@
 .comment > div {
   display: flex;
   align-items: center;
+}
+
+.title {
   justify-content: right;
 }
 
-.comment > div > p {
+.comment > div.title > p {
   font-weight: bolder;
 }
 
-.comment > div > img {
+.comment > div.title > img {
   margin-left: 10px;
   width: 25px;
 }
 
 .comment {
-  padding: ;
+  padding: 5px;
+  margin: 5px 0;
   max-width: 500px;
   display: flex;
   flex-direction: column;
+  border: solid black 2px;
+  border-radius: 5px;
 }
 
 .comments {
   display: flex;
   flex-direction: column;
-  border: solid black 2px;
   padding: 20px;
 }
 

@@ -5,6 +5,7 @@ import axios from 'axios'
 
 import Appeal from '../components/Appeal'
 
+import './Appeals.css'
 
 export default function Appeals({ self }) {
 
@@ -21,7 +22,7 @@ export default function Appeals({ self }) {
           
           <div className="App">
               <Navbar/>
-              <main>
+              <main className="appeals">
                 {appeals.map(x => <Appeal self={self} data={x} />)}
               </main>
           </div>

@@ -23,12 +23,12 @@ function Comment({data}) {
 
   return (          
     <div className="comment">
-      <div>
+      <div className="title">
         <p>{UserName}</p>
         <img src={Avatar} alt="" />
       </div>
-      <div>
-        {unescape(contents)}
+      <div className="contents">
+        <p>{unescape(contents)}</p>
       </div>
     </div>
   )
