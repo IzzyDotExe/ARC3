@@ -57,6 +57,17 @@ public static class JailExt {
     await jailChannel.AddPermissionOverwriteAsync(user, perms);
     
     await jailChannel.SendMessageAsync($"{user.Mention} you have been jailed!");
+
+    try {
+      var jailedRoleSnowflake = ulong.Parse(guildConfig["jailedrole"]);
+      var jailRole = guild.GetRole(jailedRoleSnowflake);
+
+      var guser = guild.GetUser(user.Id);
+      await guser.AddRoleAsync(jailRole);
+    } catch (Exception e) {
+      await jailChannel.SendMessageAsync("Jail role not found or failed to give role to user!");
+    }
+
     
     self.Id = Guid.NewGuid().ToString();
     self.ChannelSnowflake = ((long)jailChannel.Id);
