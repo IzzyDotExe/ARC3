@@ -8,8 +8,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 const options = {
-  key: fs.readFileSync("privkey.pem"),
-  cert: fs.readFileSync("fullchain.pem")
+  key: fs.readFileSync("/keys/privkey.pem"),
+  cert: fs.readFileSync("/keys/fullchain.pem")
 }
 
 dotenv.config();
