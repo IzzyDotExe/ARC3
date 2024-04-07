@@ -57,6 +57,9 @@ services:
     image: arc3-api
     build:
       dockerfile: arc3-api.Dockerfile
+      args:
+        - fullchain=${FULLCHAIN}
+        - privkey=${PRIVKEY}
     container_name: arc3-api
     ports:
       - 3000:3000

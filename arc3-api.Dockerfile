@@ -12,6 +12,12 @@ RUN npm run build
 FROM node
 WORKDIR /app
 
+ARG fullchain
+ARG privkey
+
+COPY ${fullchain} .
+COPY ${privkey} .
+
 COPY ./arc3-api/package*.json /app/
 RUN npm ci
 
