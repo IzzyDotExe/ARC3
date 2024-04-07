@@ -44,7 +44,7 @@ services:
       - mongo
     image: arc3
     build:
-      dockerfile: Dockerfile.arc3
+      dockerfile: arc3.Dockerfile
     container_name: arc3
     networks:
       - common-net
@@ -56,7 +56,7 @@ services:
       - arc3
     image: arc3-api
     build:
-      dockerfile: Dockerfile.arc3-api
+      dockerfile: arc3-api.Dockerfile
     container_name: arc3-api
     ports:
       - 3000:3000
