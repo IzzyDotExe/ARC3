@@ -124,7 +124,7 @@ namespace Arc3 {
           $"Registered {_interactions.SlashCommands.Count} slash commands\n" +
           $"Bot is a member of {_client.Guilds.Count} guilds\n");
 
-        await _client.SetGameAsync("/help", null, ActivityType.Listening);
+        await _client.SetGameAsync("True Blue", null, ActivityType.Listening);
       }
       catch (Exception e)
       {
