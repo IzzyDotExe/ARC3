@@ -16,7 +16,7 @@ COPY ./arc3-api/package*.json /app/
 RUN node --max-old-space-size=1000 $(which npm) ci
 
 COPY --from=build-step /app/build /app/build
-COPY ./keys .
+COPY ./keys /keys
 COPY ./arc3-api/src /app/src
 COPY ./arc3-api/bin /app/bin
 COPY ./arc3-api/__tests__ ./__tests__
