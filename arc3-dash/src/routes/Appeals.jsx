@@ -22,9 +22,10 @@ export default function Appeals({ self }) {
           
           <div className="App">
               <Navbar/>
-              <main className="appeals">
+              {/* <main className="appeals">
                 {appeals.map(x => <Appeal self={self} data={x} />)}
-              </main>
+              </main> */}
+              <h1>This feature is not yet enabled!</h1>
           </div>
       
       </>
