@@ -79,6 +79,7 @@ async function SubmitAppeal(req, res) {
     const appeal = new Appeal({
         _id: uuid.v4(),
         bannedBy: bannedBy,
+        action: 'none',
         appealContent: appealContent,
         userSnowflake: self.id,
         nextappeal: date2.getTime()
