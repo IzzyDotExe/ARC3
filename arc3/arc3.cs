@@ -111,7 +111,7 @@ namespace Arc3 {
 
           // Get the ID of the first guild the bot is a member of
           // Then register the commands to that guild
-          var guildId = (ulong)707260999496892436;
+          var guildId = ulong.Parse(Environment.GetEnvironmentVariable("GUILD_ID"));
           await _interactions.RegisterCommandsToGuildAsync(guildId, true);
           // await _interactions.RegisterCommandsGloballyAsync(true);
         }
