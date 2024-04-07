@@ -25,12 +25,12 @@ public class ModMailService : ArcService
     private async Task ModalInteractionCreated(SocketModal ctx) {
         
         var eventId = ctx.Data.CustomId;
-        String reason = ctx.Data.Components.First(x => x.CustomId == "modmail.ban.reason").Value;
-
 
         if (!eventId.StartsWith("modmail"))
             return;
 
+        String reason = ctx.Data.Components.First(x => x.CustomId == "modmail.ban.reason").Value;
+        
         var eventAction = _clientInstance.GetEventAction(eventId);
 
         if (eventAction == null)
