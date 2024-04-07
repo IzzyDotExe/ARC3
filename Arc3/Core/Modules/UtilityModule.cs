@@ -217,7 +217,7 @@ public class UtilityModule : ArcModule {
 
     if (DateTimeOffset.UtcNow > alert) {
       
-      await Context.Interaction.RespondAsync($"<@&{alertRole}>");
+      await Context.Interaction.RespondAsync($"<@&{alertRole}>", allowedMentions: AllowedMentions.All);
 
       lastAlert = DateTimeOffset.UtcNow;
       return;
