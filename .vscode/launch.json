@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Program",
       "runtimeExecutable": "nodemon",
-      "program" : "${workspaceFolder}/arc3-api/bin/www",
+      "program" : "${workspaceFolder}/arc3-api/bin/www-dev",
       "console": "integratedTerminal",
       "skipFiles": [
         "<node_internals>/**"
