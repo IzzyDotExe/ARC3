@@ -17,6 +17,7 @@
     "express-validator": "^7.0.1",
     "forever": "^4.0.3",
     "helmet": "^7.1.0",
+    "https": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.2",
     "node-fetch": "^3.3.2",
