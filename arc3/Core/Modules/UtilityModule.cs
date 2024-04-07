@@ -18,8 +18,10 @@ public class UtilityModule : ArcModule {
   public DbService DbService { get; set; }
   public UptimeService UptimeService { get; set; }
 
+  private static DateTimeOffset lastAlert = new DateTimeOffset(2024, 02, 1, 0, 0, 0, new());
+
   public UtilityModule(DiscordSocketClient clientInstance) : base(clientInstance, "Utility") {
-    
+
   }
 
   public override void RegisterListeners() {
@@ -195,6 +197,34 @@ public class UtilityModule : ArcModule {
       .Build();
 
     await Context.Interaction.RespondAsync(embed: embed, ephemeral: true);
+
+  }
+
+  [SlashCommand("alert", "Send an alert ping to the moderators")]
+  public async Task AlertCommand() {
+
+    var configValueExists = DbService.Config[Context.Guild.Id].ContainsKey("alertrole") || DbService.Config[Context.Guild.Id].ContainsKey("alertcooldown");
+    
+    if (!configValueExists) {
+      await Context.Interaction.RespondAsync("This command is not configured! Please ask the admins to set the alertrole and alertcooldown config values.", ephemeral: true);
+      return;
+    } 
+
+    string alertRole = DbService.Config[Context.Guild.Id]["alertrole"];
+    string alertcooldown = DbService.Config[Context.Guild.Id]["alertcooldown"];
+
+    var alert = lastAlert.AddHours(double.Parse(alertcooldown));
+
+    if (DateTimeOffset.UtcNow > alert) {
+      
+      await Context.Interaction.RespondAsync($"<@&{alertRole}>");
+
+      lastAlert = DateTimeOffset.UtcNow;
+      return;
+    }
+
+    await Context.Interaction.RespondAsync("Alert command is on cooldown!");
+    return;
 
   }
 
