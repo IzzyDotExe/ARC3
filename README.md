@@ -6,7 +6,7 @@ All three services are connected together using a central mongo database. The ap
 
 ## Running the system
 
-The arc system can be run easily using the docker-compose file provided (CURRENTLY UNFINISHED AS OF 27/03/2024)
+The arc system can be run easily using the docker-compose file provided
 
 First you should set up your `.env` file as follows
 ```ini
