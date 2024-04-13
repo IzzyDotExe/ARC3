@@ -226,12 +226,7 @@ public static class ModMailExt
         await channel.DeleteAsync();
     }
 
-    /// <summary>
-    /// DEPROCATED METHOD
-    /// </summary>
-    /// <param name="self"></param>
-    /// <param name="client"></param>
-    /// <param name="dbService"></param>
+    [Obsolete("Saving transcripts is deprocated now that transcripts are live. Simply start adding messages to the trasncript database with the same id to create transcripts.")]
     public static async Task SaveTranscriptAsync(this ModMail self, DiscordSocketClient client, DbService dbService) {
         
         var channel = await self.GetChannel(client);
