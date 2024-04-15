@@ -46,7 +46,8 @@ public static class ModMailExt
             AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
             CreatedAt = msg.CreatedAt.UtcDateTime,
             GuildSnowflake = ((long)channel.Guild.Id),
-            MessageContent = msg.Content
+            MessageContent = msg.Content,
+            TranscriptType = "Modmail"
         };
 
         await dbService.AddTranscriptAsync(transcript);
@@ -104,7 +105,8 @@ public static class ModMailExt
             AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
             CreatedAt = msg.CreatedAt.UtcDateTime,
             GuildSnowflake = ((long)channel.Guild.Id),
-            MessageContent = msg.Content
+            MessageContent = msg.Content,
+            TranscriptType = "Modmail"
         };
 
         await dbService.AddTranscriptAsync(transcript);
