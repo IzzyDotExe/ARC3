@@ -46,7 +46,8 @@ public static class ModMailExt
             AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
             CreatedAt = msg.CreatedAt.UtcDateTime,
             GuildSnowflake = ((long)channel.Guild.Id),
-            MessageContent = msg.Content
+            MessageContent = msg.Content,
+            TranscriptType = "Modmail"
         };
 
         await dbService.AddTranscriptAsync(transcript);
@@ -104,7 +105,8 @@ public static class ModMailExt
             AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
             CreatedAt = msg.CreatedAt.UtcDateTime,
             GuildSnowflake = ((long)channel.Guild.Id),
-            MessageContent = msg.Content
+            MessageContent = msg.Content,
+            TranscriptType = "Modmail"
         };
 
         await dbService.AddTranscriptAsync(transcript);
@@ -226,6 +228,7 @@ public static class ModMailExt
         await channel.DeleteAsync();
     }
 
+    [Obsolete("Saving transcripts is deprocated now that transcripts are live. Simply start adding messages to the trasncript database with the same id to create transcripts.")]
     public static async Task SaveTranscriptAsync(this ModMail self, DiscordSocketClient client, DbService dbService) {
         
         var channel = await self.GetChannel(client);

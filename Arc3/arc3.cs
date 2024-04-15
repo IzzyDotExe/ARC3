@@ -7,6 +7,7 @@ using Discord;
 using System.Reflection;
 using Arc3.Core.Services;
 using arc3.Core.Services;
+using System.Diagnostics;
 
 namespace Arc3 {
 
@@ -45,6 +46,7 @@ namespace Arc3 {
         .AddSingleton<DiscordSocketClient>(_client)
         .AddSingleton<DbService>()
         .AddSingleton<PaginationService>()
+        .AddSingleton<JailService>()
         .AddSingleton<UptimeService>()
         .AddSingleton<ModMailService>()
         // .AddSingleton<SocketCommService>()
@@ -56,6 +58,7 @@ namespace Arc3 {
       // var socketComms = _serviceProvider.GetRequiredService<SocketCommService>();
       var dbService = _serviceProvider.GetRequiredService<DbService>();
       var modmailService = _serviceProvider.GetRequiredService<ModMailService>();
+      var jailService = _serviceProvider.GetRequiredService<JailService>();
 
       _client.InteractionCreated += async interaction => 
       {
@@ -63,12 +66,18 @@ namespace Arc3 {
         await _interactions.ExecuteCommandAsync(ctx, services: _serviceProvider);
       };
 
-      _client.Log += Log;
-      _interactions.Log += Log;
+      var debug = Environment.GetEnvironmentVariable("DEBUG");
+
+      if (debug == "true") {
+        _client.Log += Log;
+        _interactions.Log += Log;
+      }
+      
       _client.Ready += ReadyAsync;
 
       // Get the token from our environment.
       var token = Environment.GetEnvironmentVariable("TOKEN");
+
 
       // Login and start the bot
       await _client.LoginAsync(Discord.TokenType.Bot, token);

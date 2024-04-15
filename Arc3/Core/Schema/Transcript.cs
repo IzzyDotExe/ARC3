@@ -28,4 +28,7 @@ public class Transcript {
   [BsonElement("messagecontent")]
   public string MessageContent { get; set; }
 
+  [BsonElement("transcripttype")]
+  public string TranscriptType { get; set; }
+
 }

@@ -7,7 +7,8 @@ const TranscriptSchema = new mongoose.Schema({
   attachments: [String],
   createdat: Date,
   GuildSnowflake: String,
-  messagecontent: String
+  messagecontent: String,
+  transcripttype: String
 
 });
 
