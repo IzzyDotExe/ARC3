@@ -45,6 +45,7 @@ namespace Arc3 {
         .AddSingleton<DiscordSocketClient>(_client)
         .AddSingleton<DbService>()
         .AddSingleton<PaginationService>()
+        .AddSingleton<JailService>()
         .AddSingleton<UptimeService>()
         .AddSingleton<ModMailService>()
         // .AddSingleton<SocketCommService>()
@@ -56,6 +57,7 @@ namespace Arc3 {
       // var socketComms = _serviceProvider.GetRequiredService<SocketCommService>();
       var dbService = _serviceProvider.GetRequiredService<DbService>();
       var modmailService = _serviceProvider.GetRequiredService<ModMailService>();
+      var jailService = _serviceProvider.GetRequiredService<JailService>();
 
       _client.InteractionCreated += async interaction => 
       {
