@@ -66,7 +66,7 @@ function MailView({ data, key }) {
     <a href={'/transcripts/'+data.modmailId}>
       <div className="tr"  key={key}> 
 
-        <p>Mail {timeAgo(date)}</p>
+        <p>{data.transcripttype} {timeAgo(date)}</p>
         <p>With</p>
         {
           data.participants.map((x, i, d) => {

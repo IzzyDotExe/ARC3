@@ -40,11 +40,10 @@ async function GetMailIds(req, res) {
           "_id": {
 
             modmailId: "$modmailId",
-
+            transcripttype: "$transcripttype",
             GuildSnowflake: {
               "$toString": "$GuildSnowflake"
-            },
-
+            }
           },
           Participants: {
             "$push": {
@@ -57,7 +56,7 @@ async function GetMailIds(req, res) {
             "$first": {
               createdAt: "$createdat"
             }
-          }     
+          }
 
         },
 
