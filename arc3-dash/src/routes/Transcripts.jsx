@@ -61,12 +61,14 @@ function User({userid}) {
 function MailView({ data, key }) {
 
   const date = new Date(data.date);
+  const type = data.transcripttype?? "Modmail";
+
 
   return (
     <a href={'/transcripts/'+data.modmailId}>
       <div className="tr"  key={key}> 
 
-        <p>{data.transcripttype} {timeAgo(date)}</p>
+        <p>{type} {timeAgo(date)}</p>
         <p>With</p>
         {
           data.participants.map((x, i, d) => {
@@ -104,7 +106,9 @@ export default function Transcripts() {
         <div className="side-bar">
           <button onClick={toggleSidebar}>Close</button>
           <h1>Transcripts</h1>
-          {transcripts.map((x, i, a) =>
+          {transcripts.sort((a,b) => {
+            return new Date(b.date) - new Date(a.date);
+          }).map((x, i, a) =>
             <MailView data={x} key={i}/>
           )}
         </div>
