@@ -1,4 +1,5 @@
 
+using Arc3.Core.Attributes;
 using Arc3.Core.Schema;
 using Arc3.Core.Schema.Ext;
 using Arc3.Core.Services;
@@ -10,7 +11,7 @@ using Discord.WebSocket;
 
 namespace Arc3.Core.Modules;
 
-
+[RequireCommandBlacklist]
 public class ModerationModule : ArcModule
 {
 
