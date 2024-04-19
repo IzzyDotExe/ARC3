@@ -226,4 +226,22 @@ public class DbService : ArcService {
 
   }
 
+  public async Task AddAync<T>(T item, string collection) {
+    var items = GetCollection<T>(collection);
+    await items.InsertOneAsync(item);
+  }
+
+  public async Task DeleteBlacklistAsync(Blacklist blacklist)
+  {
+    var blacklists = GetCollection<Blacklist>("blacklist");
+    var filter = Builders<Blacklist>.Filter.Where(x => x.Id == blacklist.Id);
+    await blacklists.DeleteOneAsync(filter);
+  }
+
+  public async Task ClearBlacklistAsync(long userSnowflake) {
+    var blacklists = GetCollection<Blacklist>("blacklist");
+    var filter = Builders<Blacklist>.Filter.Where(x => x.UserSnowflake == userSnowflake);
+    await blacklists.DeleteManyAsync(filter);
+  }
+
 }
