@@ -13,7 +13,7 @@ namespace Arc3 {
 
   class Arc3
   {
-    public static string ArcVersion = "3.1";
+    public static string ArcVersion = "3.2";
     
     private DiscordSocketClient? _client;
     
@@ -45,6 +45,7 @@ namespace Arc3 {
         .AddSingleton<InteractionService>()
         .AddSingleton<DiscordSocketClient>(_client)
         .AddSingleton<DbService>()
+        .AddSingleton<KaraokeService>()
         .AddSingleton<PaginationService>()
         .AddSingleton<JailService>()
         .AddSingleton<UptimeService>()
@@ -59,7 +60,8 @@ namespace Arc3 {
       var dbService = _serviceProvider.GetRequiredService<DbService>();
       var modmailService = _serviceProvider.GetRequiredService<ModMailService>();
       var jailService = _serviceProvider.GetRequiredService<JailService>();
-
+      var karaokeService = _serviceProvider.GetRequiredService<KaraokeService>();
+      
       _client.InteractionCreated += async interaction => 
       {
         var ctx = new SocketInteractionContext(_client, interaction);
