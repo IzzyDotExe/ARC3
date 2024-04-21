@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using Arc3.Core.Schema;
+using arc3.Core.Schema;
 
 namespace Arc3.Core.Services;
 
@@ -242,6 +243,52 @@ public class DbService : ArcService {
     var blacklists = GetCollection<Blacklist>("blacklist");
     var filter = Builders<Blacklist>.Filter.Where(x => x.UserSnowflake == userSnowflake);
     await blacklists.DeleteManyAsync(filter);
+  }
+
+  public async Task<int> AddToQueue(KaraokeUser user) {
+    
+    var karaokeCollection = GetCollection<KaraokeUser>("karaoke");
+    var queue = await GetQueueAsync((ulong)user.ChannelSnowflake);
+
+    if (queue.Any(x => x.ChannelSnowflake == user.ChannelSnowflake && user.UserSnowflake == x.UserSnowflake)) {
+      var usr = queue.First(x => x.ChannelSnowflake == user.ChannelSnowflake && user.UserSnowflake == x.UserSnowflake);
+      return usr.Rank;
+    }
+
+    user.Rank = queue.Count + 1;
+    await karaokeCollection.InsertOneAsync(user);
+    return user.Rank;
+
+  }
+
+  public async Task<List<KaraokeUser>> GetQueueAsync(ulong channel) {
+
+    var karaokeCollection = GetCollection<KaraokeUser>("karaoke");
+
+    var filter = Builders<KaraokeUser>.Filter.Where(x => x.ChannelSnowflake == ((long)channel));
+
+    var collection = await karaokeCollection.FindAsync(filter);
+
+    var items = await collection.ToListAsync();
+
+    var queue = items.OrderBy(x => x.Rank).ToList();
+
+    return queue;
+
+  }
+
+  public async Task PopQueue(ulong channelSnowflake) {
+        
+    var karaokeCollection = GetCollection<KaraokeUser>("karaoke");
+
+    var filter = Builders<KaraokeUser>.Filter.Where(x => x.ChannelSnowflake == ((long)channelSnowflake) && x.Rank == 1);
+    await karaokeCollection.DeleteOneAsync(filter);
+    var collectionFilter = Builders<KaraokeUser>.Filter.Where(x => x.ChannelSnowflake == ((long)channelSnowflake));
+
+    var update = Builders<KaraokeUser>.Update.Inc(x => x.Rank, -1);
+
+    await karaokeCollection.UpdateManyAsync(collectionFilter, update);
+
   }
 
 }
