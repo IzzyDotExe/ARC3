@@ -38,7 +38,7 @@ public class KaraokeService : ArcService {
   private Task ClientInstanceOnUserVoiceStateUpdated(SocketUser user, SocketVoiceState before, SocketVoiceState after)
   {
     
-    Console.WriteLine("Voice");
+    // Console.WriteLine("Voice");
 
     // If the before state has a channel
     if (before.VoiceChannel != null)
