@@ -9,6 +9,7 @@ using Discord.WebSocket;
 namespace Arc3.Core.Services;
 
 public class JailService : ArcService {
+  
   private readonly DbService _dbService;
 
   public JailService(DiscordSocketClient clientInstance, InteractionService interactionService,
@@ -54,7 +55,6 @@ public class JailService : ArcService {
       }
 
     }
-
     
   }
 
@@ -86,4 +86,5 @@ public class JailService : ArcService {
     await _dbService.AddTranscriptAsync(transcript);
     
   }
+  
 }
