@@ -245,8 +245,8 @@ public class UtilityModule : ArcModule {
     //    }
 
     var embed = new EmbedBuilder()
-      .WithTitle(title)
-      .WithDescription(description)
+      .WithTitle(title == "none" ? "" : title)
+      .WithDescription(description == "none" ? "" : description)
       .WithColor(new Color(Convert.ToUInt32(color, 16)));
 
     if (image != null)
