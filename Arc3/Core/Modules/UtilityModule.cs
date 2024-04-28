@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using MongoDB.Bson;
 using Arc3.Core.Schema;
 using System.Data.Common;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Arc3.Core.Ext;
 using Arc3.Core.Attributes;
 
@@ -234,7 +235,7 @@ public class UtilityModule : ArcModule {
 
   [SlashCommand("embedsimple", "Create an embed message"), 
    RequireUserPermission(GuildPermission.Administrator)]
-  public async Task EmbedCommand(string title, string description, string color, string thumbnail, string image, string? id = null)
+  public async Task EmbedCommand(string title, string description, string color, string? thumbnail = null, string? image = null, string? id = null)
   {
   
     // TODO: Add saving.
@@ -242,22 +243,35 @@ public class UtilityModule : ArcModule {
     //    {
     //      
     //    }
-    
+
     var embed = new EmbedBuilder()
       .WithTitle(title)
       .WithDescription(description)
-      .WithColor(new Color(Convert.ToUInt32(color, 16)))
-      .WithThumbnailUrl(thumbnail)
-      .WithImageUrl(image)
-      .Build();
+      .WithColor(new Color(Convert.ToUInt32(color, 16)));
+
+    if (image != null)
+      embed.WithImageUrl(image);
+
+    if (thumbnail != null)
+      embed.WithThumbnailUrl(thumbnail);
     
-    await Context.Channel.SendMessageAsync(embed:embed);
+    await Context.Channel.SendMessageAsync(embed:embed.Build());
     await Context.Interaction.RespondAsync("Sent!");
-//    if (id is null)
-//   ;
-//    else
-//      await Context.Interaction.RespondAsync("Sent and saved!");
-//    
+    
+    //    if (id is null)
+    //   ;
+    //    else
+    //      await Context.Interaction.RespondAsync("Sent and saved!");
+    //   
+    
+  }
+
+  [SlashCommand("status", "Change the bot status"),
+   RequireUserPermission(GuildPermission.Administrator)]
+  public async Task StatusCommand(string name, string url = null, ActivityType type = ActivityType.CustomStatus)
+  {
+    await _clientInstance.SetGameAsync(name, url, type);
+    await Context.Interaction.RespondAsync("Changed!", ephemeral:true);
   }
   
   [SlashCommand("blacklist", "Add a user to the command blacklist"),
