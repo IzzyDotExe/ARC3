@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using MongoDB.Bson;
 using Arc3.Core.Schema;
 using System.Data.Common;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Arc3.Core.Ext;
 using Arc3.Core.Attributes;
 
@@ -263,6 +264,14 @@ public class UtilityModule : ArcModule {
     //      await Context.Interaction.RespondAsync("Sent and saved!");
     //   
     
+  }
+
+  [SlashCommand("status", "Change the bot status"),
+   RequireUserPermission(GuildPermission.Administrator)]
+  public async Task StatusCommand(string name, string url = null, ActivityType type = ActivityType.CustomStatus)
+  {
+    await _clientInstance.SetGameAsync(name, url, type);
+    await Context.Interaction.RespondAsync("Changed!", ephemeral:true);
   }
   
   [SlashCommand("blacklist", "Add a user to the command blacklist"),
