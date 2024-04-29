@@ -235,7 +235,7 @@ public class UtilityModule : ArcModule {
 
   [SlashCommand("embedsimple", "Create an embed message"), 
    RequireUserPermission(GuildPermission.Administrator)]
-  public async Task EmbedCommand(string title, string description, string color, string? thumbnail = null, string? image = null, string? id = null)
+  public async Task EmbedCommand(string title, string description, string color, string? thumbnail = null, string? image = null, SocketTextChannel? channel = null)
   {
   
     // TODO: Add saving.
@@ -243,6 +243,8 @@ public class UtilityModule : ArcModule {
     //    {
     //      
     //    }
+
+    channel ??= (SocketTextChannel)Context.Channel;
 
     var embed = new EmbedBuilder()
       .WithTitle(title == "none" ? "" : title)
@@ -255,7 +257,7 @@ public class UtilityModule : ArcModule {
     if (thumbnail != null)
       embed.WithThumbnailUrl(thumbnail);
     
-    await Context.Channel.SendMessageAsync(embed:embed.Build());
+    await channel.SendMessageAsync(embed:embed.Build());
     await Context.Interaction.RespondAsync("Sent!");
     
     //    if (id is null)
