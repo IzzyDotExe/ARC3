@@ -159,7 +159,7 @@ public static class ModMailExt
                         .WithButton("Save and Close", 
                                     $"modmail.save.{self.Id}",
                                     ButtonStyle.Secondary,
-                                    new Emoji("📝"), disabled: guild == 569929112932712469)
+                                    new Emoji("📝"), disabled: guild != 569929112932712469)
                         .WithButton("Close",
                                     $"modmail.close.{self.Id}",
                                     ButtonStyle.Danger,

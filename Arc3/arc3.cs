@@ -13,7 +13,7 @@ namespace Arc3;
 
 internal class Arc3
 {
-  public static string ArcVersion = "3.2";
+  public static string ArcVersion = "3.3";
     
   private DiscordSocketClient? _client;
     
