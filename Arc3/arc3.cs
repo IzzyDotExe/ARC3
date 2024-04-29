@@ -124,7 +124,7 @@ internal class Arc3
         // Then register the commands to that guild
         var guildId = ulong.Parse(Environment.GetEnvironmentVariable("GUILD_ID")!);
         await _interactions.RegisterCommandsToGuildAsync(guildId, true);
-        // await _interactions.RegisterCommandsGloballyAsync(true);
+        
       }
       else
       {
