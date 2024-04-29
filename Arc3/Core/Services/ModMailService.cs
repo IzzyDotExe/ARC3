@@ -228,7 +228,7 @@ public class ModMailService : ArcService
                 IEmote emoji = guild.Emotes.FirstOrDefault<IEmote>(x => x.Name == "arc_icon", new Emoji("🌐"));
                 selectmenuopts.Add(new SelectMenuOptionBuilder()
                 {
-                    Description = guild.Description,
+                    Description = guild.Description[..90] + "...",
                     Emote = emoji,
                     IsDefault = false,
                     Label = guild.Name,
