@@ -269,7 +269,8 @@ public class UtilityModule : ArcModule {
   }
 
   [SlashCommand("status", "Change the bot status"),
-   RequireUserPermission(GuildPermission.Administrator)]
+   RequireUserPermission(GuildPermission.Administrator),
+   RequireOwner]
   public async Task StatusCommand(string name, string url = null, ActivityType type = ActivityType.CustomStatus)
   {
     await _clientInstance.SetGameAsync(name, url, type);
