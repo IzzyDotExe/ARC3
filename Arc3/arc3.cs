@@ -33,7 +33,7 @@ internal class Arc3
     DotEnv.Load(envOptions);
 
     var config = new DiscordSocketConfig {
-      GatewayIntents = (Discord.GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers),
+      GatewayIntents = (Discord.GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent),
       LogLevel = Discord.LogSeverity.Debug
     };
 
