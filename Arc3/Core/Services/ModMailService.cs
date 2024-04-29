@@ -19,7 +19,45 @@ public class ModMailService : ArcService
         _dbService = dbService;
         clientInstance.MessageReceived += ClientInstanceOnMessageReceived;
         clientInstance.ButtonExecuted += ButtonInteractionCreated;
+        clientInstance.SelectMenuExecuted += ClientInstanceOnSelectMenuExecuted;
         clientInstance.ModalSubmitted += ModalInteractionCreated;
+    }
+
+    private async Task ClientInstanceOnSelectMenuExecuted(SocketMessageComponent arg)
+    {
+
+        if (!arg.Data.CustomId.StartsWith("modmail.select"))
+            return;
+ 
+        var guild_id = arg.Data.Values.First();
+        
+        ModMail? modmail = null;
+        try {
+
+            var guild = _clientInstance.GetGuild(ulong.Parse(guild_id??"0"));
+            modmail = new ModMail();
+
+                
+            await modmail.InitAsync(_clientInstance, guild, arg.User, _dbService);
+            await modmail.SendUserSystem(_clientInstance, "Your modmail request was recieved! Please wait and a staff member will assist you shortly.");
+            await modmail.SendModMailMenu(_clientInstance);
+
+            await arg.RespondAsync();
+
+        } catch(Exception e) {
+                
+            // TODO: Log Failure 
+            Console.WriteLine(e);
+            
+            await arg.RespondAsync("Failed to create the modmail session", ephemeral: true);
+
+            if (modmail != null) {
+                var modmails = await _dbService.GetModMails();
+                if (modmails.Any(x => x.Id == modmail.Id)) 
+                    await _dbService.RemoveModMail(modmail.Id);
+            }
+
+        }
     }
 
     private async Task ModalInteractionCreated(SocketModal ctx) {
@@ -90,7 +128,7 @@ public class ModMailService : ArcService
             case "modmail.ban":
                 await ConfirmBanUser(modmail, ctx);
                 break;
-
+            
             default:
                 break;
 
@@ -173,31 +211,35 @@ public class ModMailService : ArcService
 
             // TODO: Insert server picking mechanism
             // For now choose the default guild
-            var guild_id = Environment.GetEnvironmentVariable("GUILD_ID");
-            ModMail? modmail = null;
-            try {
 
-                var guild = _clientInstance.GetGuild(ulong.Parse(guild_id??"0"));
-                modmail = new ModMail();
-
+            var selectmenuopts = new List<SelectMenuOptionBuilder>();
+            
+            foreach (var guild in _clientInstance.Guilds)
+            { 
                 
-                await modmail.InitAsync(_clientInstance, guild, arg.Author, _dbService);
-                await modmail.SendUserSystem(_clientInstance, "Your modmail request was recieved! Please wait and a staff member will assist you shortly.");
-                await modmail.SendModMailMenu(_clientInstance);
+                if (!_dbService.Config.ContainsKey(guild.Id))
+                    continue;
+                var guildConfig = _dbService.Config[guild.Id];
                 
-            } catch(Exception e) {
+                if (!guildConfig.ContainsKey("modmailchannel"))
+                    continue;
                 
-                // TODO: Log Failure 
-                Console.WriteLine(e);
-
-                if (modmail != null) {
-                    var modmails = await _dbService.GetModMails();
-                    if (modmails.Any(x => x.Id == modmail.Id)) 
-                        await _dbService.RemoveModMail(modmail.Id);
-                }
-
+                Console.WriteLine(guild.Name);
+                IEmote emoji = guild.Emotes.FirstOrDefault<IEmote>(x => x.Name == "arc_icon", new Emoji("🌐"));
+                selectmenuopts.Add(new SelectMenuOptionBuilder()
+                {
+                    Description = guild.Description,
+                    Emote = emoji,
+                    IsDefault = false,
+                    Label = guild.Name,
+                    Value = guild.Id.ToString()
+                });
             }
-
+            
+            var content = new ComponentBuilder()
+                .WithSelectMenu("modmail.select.server", selectmenuopts);
+            
+            await arg.Author.SendMessageAsync("Please select a server to modmail", components:content.Build());
 
         } else {
 
