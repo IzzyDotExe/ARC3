@@ -103,6 +103,8 @@ internal class Arc3
 
   private async Task ReadyAsync()
   {
+    
+    var debug = Environment.GetEnvironmentVariable("DEBUG");
 
     if (_client == null)
       throw new Exception("Client is not initialized");
@@ -122,9 +124,17 @@ internal class Arc3
 
         // Get the ID of the first guild the bot is a member of
         // Then register the commands to that guild
-        var guildId = ulong.Parse(Environment.GetEnvironmentVariable("GUILD_ID")!);
-        await _interactions.RegisterCommandsToGuildAsync(guildId, true);
-        // await _interactions.RegisterCommandsGloballyAsync(true);
+
+        if (debug == "true")
+        {
+          var guildId = ulong.Parse(Environment.GetEnvironmentVariable("GUILD_ID")!);
+          await _interactions.RegisterCommandsToGuildAsync(guildId, true);
+        }
+        else
+        {
+          await _interactions.RegisterCommandsGloballyAsync(true);
+        }
+        
       }
       else
       {
