@@ -11,6 +11,8 @@ public class ModMailService : ArcService
 {
     
     private readonly DbService _dbService;
+
+    private List<long> ActiveChannels = new List<long>();
     
     public ModMailService(DiscordSocketClient clientInstance, InteractionService interactionService,
         DbService dbService)
@@ -22,6 +24,12 @@ public class ModMailService : ArcService
         clientInstance.SelectMenuExecuted += ClientInstanceOnSelectMenuExecuted;
         clientInstance.ModalSubmitted += ModalInteractionCreated;
         clientInstance.UserIsTyping += ClientInstanceOnUserIsTyping;
+        var mails = dbService.GetModMails().GetAwaiter().GetResult();
+        
+        foreach (var var in mails)
+        {
+            ActiveChannels?.Add(var.ChannelSnowflake);
+        }
     }
 
     private async Task ClientInstanceOnUserIsTyping(Cacheable<IUser, ulong> user, Cacheable<IMessageChannel, ulong> channel)
@@ -89,7 +97,8 @@ public class ModMailService : ArcService
             await modmail.InitAsync(_clientInstance, guild, arg.User, _dbService);
             await modmail.SendUserSystem(_clientInstance, "Your modmail request was recieved! Please wait and a staff member will assist you shortly.");
             await modmail.SendModMailMenu(_clientInstance);
-
+            
+            ActiveChannels.Add(modmail.ChannelSnowflake);
             await arg.RespondAsync();
 
         } catch(Exception e) {
@@ -228,6 +237,9 @@ public class ModMailService : ArcService
         // Non private messages are handled as from a moderator
         if (arg.Channel.GetChannelType() != ChannelType.DM)
         {
+
+            if (!ActiveChannels.Contains((long)arg.Channel.Id))
+                return;
             
             // Quit if the message is from a bot
             if (arg.Author.IsBot)
@@ -328,6 +340,7 @@ public class ModMailService : ArcService
 
     private async Task CloseModMailSession(ModMail m, SocketUser user)
     {
+        ActiveChannels.Remove(m.ChannelSnowflake);
         await m.SendUserSystem(_clientInstance, $"Your mod mail session was closed by {user.Mention}!");
         await m.CloseAsync(_clientInstance, _dbService);
     }
