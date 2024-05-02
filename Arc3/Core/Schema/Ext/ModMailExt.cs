@@ -10,8 +10,9 @@ namespace Arc3.Core.Schema.Ext;
 
 public static class ModMailExt
 {
-    public static SocketUser GetUser(this ModMail self, DiscordSocketClient clientInstance) {
-        var user = clientInstance.GetUser(((ulong)self.UserSnowflake));
+    public static async Task<IUser> GetUser(this ModMail self, DiscordSocketClient clientInstance)
+    {
+        var user = await clientInstance.GetUserAsync((ulong)self.UserSnowflake);
         return user;
     }
 
@@ -31,6 +32,7 @@ public static class ModMailExt
     
     public static async Task SendUserAsync(this ModMail self, SocketMessage msg, DiscordSocketClient clientInstance, DbService dbService)
     {
+        
         var embed = new EmbedBuilder()
             .WithModMailStyle(clientInstance)
             .WithAuthor(msg.Author.Username, msg.Author.GetDisplayAvatarUrl())
@@ -60,7 +62,30 @@ public static class ModMailExt
 
         // Send the message
         if (!string.IsNullOrWhiteSpace(msg.Content))
-            await self.GetUser(clientInstance).SendMessageAsync(embed: embed);
+        {
+            try
+            {
+                var user = await self.GetUser(clientInstance);
+                await user.SendMessageAsync(embed: embed);
+            }
+            catch (Exception ex)
+            {
+                
+                await msg.AddReactionAsync(new Emoji("🔴"));
+                
+                await msg.RemoveReactionAsync(new Emoji("📤"), clientInstance.CurrentUser);
+            }
+            finally
+            {
+                
+                await msg.AddReactionAsync(new Emoji("📨"));
+                
+                await msg.RemoveReactionAsync(new Emoji("📤"), clientInstance.CurrentUser);
+                
+            }
+            
+        }
+            
         
         // Share attachments
         if (msg.Attachments.Count > 0)
@@ -74,8 +99,20 @@ public static class ModMailExt
                     .WithImageUrl(attachment.ProxyUrl)
                     .Build();
                 
-                await self.GetUser(clientInstance).SendMessageAsync(embed: emb);
-                
+                try
+                {
+                    var user = await self.GetUser(clientInstance);
+                    await user.SendMessageAsync(embed: embed);
+                }
+                catch (Exception ex)
+                {
+                    await msg.AddReactionAsync(new Emoji("🔴"));
+                }
+                finally
+                {
+               
+                    await msg.AddReactionAsync(new Emoji("📨"));
+                }
             }
         }
         
@@ -91,7 +128,8 @@ public static class ModMailExt
             .WithDescription(content)
             .Build();
 
-        await self.GetUser(clientInstance).SendMessageAsync(embed: embed);
+        var user = await self.GetUser(clientInstance);
+        await user.SendMessageAsync(embed: embed);
     }
 
     public static async Task SendMods(this ModMail self, SocketMessage msg, DiscordSocketClient clientInstance, DbService dbService)
@@ -135,7 +173,7 @@ public static class ModMailExt
     public static async Task SendModMailMenu(this ModMail self, DiscordSocketClient clientInstance, Appeal? appeal = null)
     {
 
-        var user = self.GetUser(clientInstance);
+        var user = await self.GetUser(clientInstance);
         var channel = await self.GetChannel(clientInstance);
         var guild = channel.GuildId;
         

@@ -1,5 +1,6 @@
 
 using Arc3.Core.Attributes;
+using Arc3.Core.Ext;
 using Arc3.Core.Schema;
 using Arc3.Core.Schema.Ext;
 using Arc3.Core.Services;
@@ -8,6 +9,7 @@ using Discord;
 using Discord.Interactions;
 using Discord.Net;
 using Discord.WebSocket;
+using MongoDB.Bson;
 
 namespace Arc3.Core.Modules;
 
@@ -220,7 +222,78 @@ public class ModerationModule : ArcModule
    
 
   }
-
+  
   #endregion
 
+  [SlashCommand("diagnose", "Diagnose a modmail channel"),
+  RequireUserPermission(GuildPermission.ManageMessages)]
+  public async Task DiagnoseModmail()
+  {
+    var mails = await DbService.GetModMails();
+
+    if (!mails.Any(x => (ulong)x.ChannelSnowflake == Context.Channel.Id))
+    {
+      await Context.Interaction.RespondAsync("This channel is not a modmail channel");
+      return;
+    }
+
+    var mail = mails.First(x => (ulong)x.ChannelSnowflake == Context.Channel.Id);
+
+    var embed = new EmbedBuilder().WithModMailStyle(_clientInstance);
+    var channel = await mail.GetChannel(_clientInstance);
+    var user = await mail.GetUser(_clientInstance);
+
+    var candm = true;
+    IUserMessage msg = null;
+    
+    try
+    {
+      msg = await user.SendMessageAsync(".");
+    }
+    catch (HttpException ex)
+    {
+      candm = false;
+    }
+    finally
+    {
+      await msg?.DeleteAsync()!;
+    }
+      
+    embed.WithTitle("Modmail Diagnostics");
+    embed.AddField("ID", mail.Id);
+    embed.AddField("Can DM user", candm.ToString());
+
+    await Context.Interaction.RespondAsync(embed:embed.Build());
+
+  }
+
+
+  [SlashCommand("dispose", "Dispose a modmail channel"),
+  RequireUserPermission(GuildPermission.ManageChannels)]
+  public async Task DisposeModmail()
+  {
+    var mails = await DbService.GetModMails();
+
+    if (!mails.Any(x => (ulong)x.ChannelSnowflake == Context.Channel.Id))
+    {
+      await Context.Interaction.RespondAsync("This channel is not a modmail channel");
+      return;
+    }
+
+    var mail = mails.First(x => (ulong)x.ChannelSnowflake == Context.Channel.Id);
+
+    try
+    {
+      await mail.CloseAsync(_clientInstance, DbService);
+    }
+    catch (Exception ex)
+    {
+      var chan = await mail.GetChannel(clientInstance: _clientInstance);
+      await DbService.RemoveModMail(mail.Id);
+      await chan.DeleteAsync();
+    }
+
+    
+  }
+  
 }

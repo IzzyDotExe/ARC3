@@ -21,6 +21,54 @@ public class ModMailService : ArcService
         clientInstance.ButtonExecuted += ButtonInteractionCreated;
         clientInstance.SelectMenuExecuted += ClientInstanceOnSelectMenuExecuted;
         clientInstance.ModalSubmitted += ModalInteractionCreated;
+        clientInstance.UserIsTyping += ClientInstanceOnUserIsTyping;
+    }
+
+    private async Task ClientInstanceOnUserIsTyping(Cacheable<IUser, ulong> user, Cacheable<IMessageChannel, ulong> channel)
+    {
+        
+        if (user.Id == _clientInstance.CurrentUser.Id)
+            return;
+        
+        // Private messages are handled as from a user
+        var mails = await _dbService.GetModMails();
+
+
+        var chan2 = await _clientInstance.GetChannelAsync(channel.Id);
+        
+        if (mails.Any(x => (ulong)x.UserSnowflake == user.Id) && chan2.GetChannelType() == ChannelType.DM)
+        {
+            var mail = mails.First(x => (ulong)x.UserSnowflake == user.Id);
+            var chan = await mail.GetChannel(_clientInstance);
+            var msgs = chan.GetMessagesAsync(1);
+            
+            await msgs.ForEachAwaitAsync(async (msg) =>
+            {
+                await chan.TriggerTypingAsync();
+            });
+
+            return;
+        }
+
+
+        if (mails.Any(x => (ulong)x.ChannelSnowflake == chan2.Id))
+        {
+            var mail = mails.First(x => (ulong)x.ChannelSnowflake == chan2.Id);
+            var mailchan = await mail.GetChannel(_clientInstance);
+            var usr = await mail.GetUser(clientInstance:_clientInstance);
+            var dm = await usr.CreateDMChannelAsync();
+
+            if (dm == null) return;
+            
+            if (_dbService.Config.TryGetValue(mailchan.GuildId, out var value) 
+                && value.TryGetValue("modmailtyping", out var value2) && value2 == "true")
+                await dm.TriggerTypingAsync();
+        }
+
+
+
+
+
     }
 
     private async Task ClientInstanceOnSelectMenuExecuted(SocketMessageComponent arg)
@@ -47,7 +95,7 @@ public class ModMailService : ArcService
         } catch(Exception e) {
                 
             // TODO: Log Failure 
-            Console.WriteLine(e);
+            // Console.WriteLine(e);
             
             await arg.RespondAsync("Failed to create the modmail session", ephemeral: true);
 
@@ -88,7 +136,7 @@ public class ModMailService : ArcService
         switch (eventAction.Value.Item1) {
             case "modmail.ban.confirm":
                 await ctx.DeferAsync();
-                var member = modmail.GetUser(_clientInstance);
+                var member = await modmail.GetUser(_clientInstance);
                 await SaveModMailSession(modmail, ctx.User);
                 await CloseModMailSession(modmail, ctx.User);
                 await BanMailUser(member, reason, modmail);
@@ -152,7 +200,7 @@ public class ModMailService : ArcService
 
     }
 
-    private async Task BanMailUser(SocketUser user, string reason, ModMail mail) {
+    private async Task BanMailUser(IUser user, string reason, ModMail mail) {
         var author = _clientInstance.CurrentUser;
         var channel = await mail.GetChannel(_clientInstance);
         var guild = channel.Guild;
@@ -224,11 +272,11 @@ public class ModMailService : ArcService
                 if (!guildConfig.ContainsKey("modmailchannel"))
                     continue;
                 
-                Console.WriteLine(guild.Name);
+                // Console.WriteLine(guild.Name);
                 IEmote emoji = guild.Emotes.FirstOrDefault<IEmote>(x => x.Name == "arc_icon", new Emoji("🌐"));
                 selectmenuopts.Add(new SelectMenuOptionBuilder()
                 {
-                    Description = guild.Description[..90] + "...",
+                    Description = guild.Description?[..90] + "...",
                     Emote = emoji,
                     IsDefault = false,
                     Label = guild.Name,
@@ -243,6 +291,8 @@ public class ModMailService : ArcService
 
         } else {
 
+            await arg.AddReactionAsync(new Emoji("📤"));
+            
             if (arg.Author.IsBot)
                 return;
 
@@ -256,7 +306,20 @@ public class ModMailService : ArcService
 
             }
             
-            await modmail.SendMods(arg, _clientInstance, _dbService);
+            try
+            {
+                await modmail.SendMods(arg, _clientInstance, _dbService);
+            }
+            catch (Exception ex)
+            {
+                await arg.AddReactionAsync(new Emoji("🔴"));
+                await arg.RemoveReactionAsync(new Emoji("📤"), _clientInstance.CurrentUser);
+            }
+            finally
+            {
+                await arg.AddReactionAsync(new Emoji("📨"));
+                await arg.RemoveReactionAsync(new Emoji("📤"), _clientInstance.CurrentUser);
+            }
 
         }
         
@@ -275,7 +338,7 @@ public class ModMailService : ArcService
         var channel = await m.GetChannel(_clientInstance);
         var guild = channel.Guild;
         var transcriptchannel = await _clientInstance.GetChannelAsync(ulong.Parse(_dbService.Config[guild.Id]["transcriptchannel"]));
-        var user = m.GetUser(_clientInstance);
+        var user = await m.GetUser(_clientInstance);
         var embed = new EmbedBuilder()
             .WithModMailStyle(_clientInstance)
             .WithTitle("Modmail Transcript")
@@ -288,6 +351,7 @@ public class ModMailService : ArcService
     private async Task HandleMailChannelMessage(SocketMessage msg)
     {
     
+        await msg.AddReactionAsync(new Emoji("📤"));
         
         var mails = await _dbService.GetModMails();
         ModMail mail;

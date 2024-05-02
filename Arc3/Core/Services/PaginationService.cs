@@ -174,7 +174,7 @@ public class PaginationSession {
       currentPage.Embed = new EmbedBuilder().WithDescription("```Deleted```").Build();
        
       // Delete the note
-      Console.WriteLine(comp.Components.First().CustomId);
+      // Console.WriteLine(comp.Components.First().CustomId);
       await DbService.RemoveUserNote(comp.Components.First().CustomId.Split('.')[2]);
       
       await Update();
