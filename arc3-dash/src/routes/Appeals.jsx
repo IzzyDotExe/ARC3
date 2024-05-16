@@ -18,16 +18,16 @@ export default function Appeals({ self }) {
   }, [setAppeals])
 
   return (
-      <>
-          
-          <div className="App">
-              <Navbar/>
-              {/* <main className="appeals">
-                {appeals.map(x => <Appeal self={self} data={x} />)}
-              </main> */}
-              <h1>This feature is not yet enabled!</h1>
-          </div>
+    <>
       
-      </>
+      <div className="App">
+        <Navbar/>
+        {/* <main className="appeals">
+          {appeals.map(x => <Appeal self={self} data={x} />)}
+        </main> */}
+        <h1>This feature is not yet enabled!</h1>
+      </div>
+    
+    </>
   )
 }
