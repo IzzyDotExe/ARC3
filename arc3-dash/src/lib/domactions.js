@@ -5,3 +5,11 @@ export function toggleSidebar() {
   else 
     sidebar.style.display = 'flex';
 }
+
+export function setSideBar(set) {
+  const sidebar = document.querySelector('.side-bar');
+  if (!set)
+    sidebar.style.display = 'none';
+  else 
+    sidebar.style.display = 'flex';
+}
