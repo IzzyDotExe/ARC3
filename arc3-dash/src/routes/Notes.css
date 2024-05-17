@@ -1,0 +1,25 @@
+.NotesPick {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.NotesPick > 
+.sidebar {
+  padding: 10px;
+  flex: 2;
+}
+
+.NotesPick >
+.notes-sec {
+  flex: 5;
+}
+
+.sidebar
+.user-tr {
+  padding: 10px;
+}
+
+
+
+
