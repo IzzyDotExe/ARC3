@@ -11,6 +11,8 @@ import Transcript from './routes/Transcript';
 import Transcripts from './routes/Transcripts';
 import Appeal from './routes/Appeal'
 import Appeals from './routes/Appeals'
+import UserNotes from './routes/UserNotes.jsx';
+import Notes from './routes/Notes'
 
 function App() {
 
@@ -30,6 +32,17 @@ function App() {
       {
         path: "/",
         element: <Home/>
+      },
+
+      {
+        path: "/:guild/notes/",
+        element: <Notes/>,
+        children: [
+          {
+          path: ":userid",
+          element: <UserNotes />
+          }
+        ]
       },
       
       {
@@ -51,6 +64,12 @@ function App() {
       {
         path: "/appeal",
         element: <Appeal />
+      }, 
+
+      {
+        path: "/notes",
+        element: <Notes/>
+
       }
   
     ]
