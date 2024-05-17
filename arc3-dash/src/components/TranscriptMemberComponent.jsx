@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 
-export default function TranscriptMemberComponent({userid}) {
+export function TranscriptMemberComponent({userid}) {
 
   const [user, setUser] = useState(null);
 

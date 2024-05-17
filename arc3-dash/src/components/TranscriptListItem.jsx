@@ -1,7 +1,7 @@
 import {TranscriptMemberComponent} from './TranscriptMemberComponent.jsx';
 import {timeAgo} from '../lib/utils.js';
 
-export default function TranscriptListItem({ data, key }) {
+export  function TranscriptListItem({ data, key }) {
 
   const date = new Date(data.date);
   const type = data.transcripttype?? "Modmail";

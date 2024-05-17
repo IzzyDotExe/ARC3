@@ -1,6 +1,6 @@
 import {TranscriptListItem} from './TranscriptListItem.jsx';
 
-export default function TranscriptSidebar({transcripts, toggleSidebar}) {
+export function TranscriptSidebar({transcripts, toggleSidebar}) {
   return (
     <div className="side-bar">
       <button onClick={toggleSidebar}>Close</button>
