@@ -9,6 +9,7 @@ export default function Navbar() {
         {/* <li><a href='/appeal'>Appeal</a></li>
         <li><a href='/appeals'>Appeals</a></li> */}
         <li><a href="/transcripts/">Transcripts</a></li>
+        <li><a href="/569929112932712469/notes">User Notes</a></li>
       </ul>
     </nav>
   )
