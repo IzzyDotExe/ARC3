@@ -70,26 +70,22 @@ public class JailService : ArcService {
 
     var jail = jails.First(x => x.ChannelSnowflake == (long)arg.Channel.Id);
     var channel = await jail.GetChannel(_clientInstance);
-
-    // TODO: Transcripts for all
-    if (channel.GuildId == 569929112932712469)
+  
+    var transcript = new Transcript
     {
-      
-      var transcript = new Transcript
-      {
-        Id = arg.Id.ToString(),
-        ModMailId = jail.Id,
-        SenderSnowfake = (long)arg.Author.Id,
-        AttachmentURls = arg.Attachments.Select(x => x.ProxyUrl).ToArray(),
-        CreatedAt = arg.CreatedAt.UtcDateTime,
-        GuildSnowflake = (long)channel.GuildId,
-        MessageContent = arg.Content,
-        TranscriptType = "Jail"
-      };
+      Id = arg.Id.ToString(),
+      ModMailId = jail.Id,
+      SenderSnowfake = (long)arg.Author.Id,
+      AttachmentURls = arg.Attachments.Select(x => x.ProxyUrl).ToArray(),
+      CreatedAt = arg.CreatedAt.UtcDateTime,
+      GuildSnowflake = (long)channel.GuildId,
+      MessageContent = arg.Content,
+      TranscriptType = "Jail"
+    };
 
-      await _dbService.AddTranscriptAsync(transcript);
-      
-    }
+    await _dbService.AddTranscriptAsync(transcript);
+    
+  
     
   }
   
