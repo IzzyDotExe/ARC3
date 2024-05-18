@@ -27,7 +27,7 @@ export default function Notes() {
 
       <title>User Notes</title>
 
-      <Navbar/>
+      <Navbar guild={guild}/>
 
       <main>
         <div className="NotesPick">

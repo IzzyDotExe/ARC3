@@ -35,12 +35,23 @@ app.get('/login', (req, res) => {
 })
 
 // Protect the transcripts route.
-app.get('/transcripts/*', authenticated, whitelist, (req, res) => {
+app.get('/:guildid/transcripts/', authenticated, whitelist, (req, res) => {
+  res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
+})
+
+
+// Protect the transcripts route.
+app.get('/:guildid/transcripts/*', authenticated, whitelist, (req, res) => {
   res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
 })
 
 // Protect the notes routes.
-app.get('/*/notes/*', authenticated, whitelist, (req, res) => {
+app.get('/:guildid/notes/', authenticated, whitelist, (req, res) => {
+  res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
+})
+
+// Protect the notes routes.
+app.get('/:guildid/notes/*', authenticated, whitelist, (req, res) => {
   res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
 })
 

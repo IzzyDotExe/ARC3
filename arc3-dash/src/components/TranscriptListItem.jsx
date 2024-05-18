@@ -7,7 +7,9 @@ export  function TranscriptListItem({ data, key }) {
   const type = data.transcripttype?? "Modmail";
 
   return (
-    <a href={'/transcripts/'+data.modmailId}>
+
+    <a href={`/${data.GuildSnowflake}/transcripts/`+data.modmailId}>
+      
       <div className="tr"  key={key}> 
 
         <p>{type} {timeAgo(date)}</p>

@@ -205,7 +205,7 @@ public class UtilityModule : ArcModule {
 
   }
 
-  [SlashCommand("alert", "Send an alert ping to the moderators")]
+  [SlashCommand("alert", "Send an alert ping to the moderators"), RequirePremium]
   public async Task AlertCommand() {
 
     var configValueExists = DbService.Config[Context.Guild.Id].ContainsKey("alertrole") || DbService.Config[Context.Guild.Id].ContainsKey("alertcooldown");
@@ -234,7 +234,7 @@ public class UtilityModule : ArcModule {
   }
 
   [SlashCommand("embedsimple", "Create an embed message"), 
-   RequireUserPermission(GuildPermission.Administrator)]
+   RequireUserPermission(GuildPermission.Administrator), RequirePremium]
   public async Task EmbedCommand(string title, string description, string color, string? thumbnail = null, string? image = null, SocketTextChannel? channel = null)
   {
   
@@ -268,17 +268,8 @@ public class UtilityModule : ArcModule {
     
   }
 
-  [SlashCommand("status", "Change the bot status"),
-   RequireUserPermission(GuildPermission.Administrator),
-   RequireOwner]
-  public async Task StatusCommand(string name, string url = null, ActivityType type = ActivityType.CustomStatus)
-  {
-    await _clientInstance.SetGameAsync(name, url, type);
-    await Context.Interaction.RespondAsync("Changed!", ephemeral:true);
-  }
-  
   [SlashCommand("blacklist", "Add a user to the command blacklist"),
-  RequireUserPermission(GuildPermission.Administrator)]
+  RequireUserPermission(GuildPermission.Administrator), RequirePremium]
   public async Task BlacklistCommand(
     SocketUser user,
     string? cmd = "all"
@@ -321,7 +312,7 @@ public class UtilityModule : ArcModule {
 
   [UserCommand("Clear Blacklist"),
   SlashCommand("unblacklist", "Clear a user's blacklist"),
-  RequireUserPermission(GuildPermission.Administrator)]
+  RequireUserPermission(GuildPermission.Administrator), RequirePremium]
   public async Task UnblacklistCommand(SocketUser user) {
 
     var ctx = Context.Interaction;
@@ -351,4 +342,22 @@ public class UtilityModule : ArcModule {
 
   }
 
+  [SlashCommand("whitelist", "add a user to the mod whitelist"), RequireUserPermission(GuildPermission.Administrator)]
+  public async Task WhiteListCommand(SocketUser user) {
+    var guild = await DbService.GetItemsAsync<GuildInfo>("Guilds");
+    var self = guild.First(x => x.GuildSnowflake == Context.Guild.Id.ToString());
+    var mods = self.Moderators;
+
+    if (mods.Contains(user.Id.ToString())) {
+      mods.Remove(user.Id.ToString());
+      await Context.Interaction.RespondAsync("User was unwhitelisted");
+    } else {
+      mods.Add(user.Id.ToString());
+      await Context.Interaction.RespondAsync("User was whitelisted");
+    }
+
+    await DbService.UpdateModList(Context.Guild.Id.ToString(), mods);
+
+  }
+  
 }
