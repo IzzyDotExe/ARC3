@@ -261,6 +261,14 @@ public class DbService : ArcService {
 
   }
 
+  public async Task UpdatePremium(string guild, bool premium)
+  {
+    var collection = GetCollection<GuildInfo>("Guilds");
+    var filter = Builders<GuildInfo>.Filter.Where(x => x.GuildSnowflake == guild);
+    var upd = Builders<GuildInfo>.Update.Set(x => x.Premium, premium);
+    await collection.UpdateOneAsync(filter, upd);
+  }
+
   public async Task<List<KaraokeUser>> GetQueueAsync(ulong channel) {
 
     var karaokeCollection = GetCollection<KaraokeUser>("karaoke");

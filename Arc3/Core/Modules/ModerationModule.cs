@@ -117,7 +117,7 @@ public class ModerationModule : ArcModule
   }
 
   [UserCommand("User Notes"),
-   RequireUserPermission(GuildPermission.ManageMessages)]
+   RequireUserPermission(GuildPermission.ManageMessages), RequirePremium]
   public async Task UserNotes(SocketUser user) {
 
 
