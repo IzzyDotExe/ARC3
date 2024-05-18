@@ -8,12 +8,14 @@ using System.Reflection;
 using Arc3.Core.Services;
 using arc3.Core.Services;
 using System.Diagnostics;
+using Arc3.Core.Schema;
+using System.ComponentModel;
 
 namespace Arc3;
 
 internal class Arc3
 {
-  public static string ArcVersion = "3.4";
+  public static string ArcVersion = "3.5";
     
   private DiscordSocketClient? _client;
     
@@ -23,7 +25,7 @@ internal class Arc3
 
   public static Task Main(string[] args) => new Arc3().MainAsync();
 
-  public async Task MainAsync() {
+  private async Task MainAsync() {
 
     // Load the .env file from the root directory change the path if needed
     var envFilePath = Path.GetFullPath("../.env");
@@ -76,6 +78,7 @@ internal class Arc3
     }
 
     _client.Ready += ReadyAsync;
+    _client.JoinedGuild += ClientOnJoinedGuild;
 
     // Get the token from our environment.
     var token = Environment.GetEnvironmentVariable("TOKEN");
@@ -88,6 +91,16 @@ internal class Arc3
     // Block this task until the program is closed!
     await Task.Delay(-1);
 
+  }
+
+  private async Task ClientOnJoinedGuild(SocketGuild arg)
+  {
+    if (_serviceProvider != null)
+    {
+      var db = _serviceProvider.GetRequiredService<DbService>();
+      var guildinfos = await db.GetItemsAsync<GuildInfo>("Guilds");
+      await NewGuild(guildinfos, arg, db);
+    }
   }
 
   private Task Log(LogMessage message)
@@ -122,8 +135,15 @@ internal class Arc3
         // Also pass in the service provider so services can be accessed in modules
         await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
 
-        // Get the ID of the first guild the bot is a member of
-        // Then register the commands to that guild
+        // Go through all guilds and check if we have a saved infolog
+
+        var db = _serviceProvider.GetRequiredService<DbService>();
+        var guildinfos = await db.GetItemsAsync<GuildInfo>("Guilds");
+        
+        foreach (var guild in _client.Guilds)
+        {
+          await NewGuild(guildinfos, guild, db);
+        }
 
         if (debug == "true")
         {
@@ -155,4 +175,22 @@ internal class Arc3
     }
   }
 
+  private async Task NewGuild(IEnumerable<GuildInfo> guildinfos, SocketGuild guild, DbService db)
+  {
+    // Guard if guild info already exists
+    if (guildinfos.Any(x => x.GuildSnowflake == guild.Id.ToString()))
+      return;
+
+    // Send the guild info
+    await db.AddAync<GuildInfo>(new GuildInfo()
+    {
+      GuildSnowflake = guild.Id.ToString(),
+      Premium = false,
+      Moderators = new List<string>(),
+      OwnerId = (long)guild.OwnerId
+    }, "Guilds");
+
+    // TODO: Welcome message!!
+    
+  }
 }
