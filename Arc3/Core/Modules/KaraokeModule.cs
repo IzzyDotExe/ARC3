@@ -10,7 +10,7 @@ using Discord.WebSocket;
 
 namespace Arc3.Core.Modules;
 
-[RequireCommandBlacklist]
+[RequireCommandBlacklist, RequirePremium]
 public class KaraokeModule : ArcModule {
 
   public DbService DbService { get; set ; }
@@ -55,7 +55,7 @@ public class KaraokeModule : ArcModule {
   #region commands
 
   [SlashCommand("queuejoin", "Join the queue for the current channel."),
-  KaraokePreconditionCheck(false)]
+  KaraokePrecondition(false)]
   public async Task QueueJoinCommand() {
 
     var guildUser = Context.Guild.GetUser(Context.User.Id);
@@ -73,7 +73,7 @@ public class KaraokeModule : ArcModule {
   }
 
   [SlashCommand("queue", "View the queue!"),
-  KaraokePreconditionCheck(false)]
+  KaraokePrecondition(false)]
   public async Task QueueCommand() {
     
     var embed = await GetQueueEmbed();
@@ -83,7 +83,7 @@ public class KaraokeModule : ArcModule {
   }
 
   [SlashCommand("queuenext", "Skip to the next user in the queue."),
-  KaraokePreconditionCheck]
+  KaraokePrecondition]
   public async Task QueueNextCommand() {
 
     var guildUser = Context.Guild.GetUser(Context.User.Id);
@@ -100,7 +100,7 @@ public class KaraokeModule : ArcModule {
   }
 
   [SlashCommand("queuelock", "Lock the queue so only admins and mods can skip"),
-   KaraokePreconditionCheck]
+   KaraokePrecondition]
   public async Task QueueLockCommand()
   {
     
