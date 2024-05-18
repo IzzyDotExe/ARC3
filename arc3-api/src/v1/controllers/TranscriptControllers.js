@@ -3,9 +3,10 @@ const Transcript = require('../db/Transcript.js');
 async function GetTranscripts(req, res) {
 
   const modmailID = req.params.mailId;
+  const guild = req.params.guild;
 
   // Guard if the modmail id is undefined
-  if (modmailID === undefined) {
+  if (modmailID === undefined || guild === undefined) {
     res.status(404);
     res.json({'status': 404, 'error': 'Could not find that modmail'});
     return;
@@ -14,7 +15,7 @@ async function GetTranscripts(req, res) {
   // Try and get the transcripts and send them
   try {
 
-    const transcripts = await Transcript.find({ 'modmailId': modmailID}).sort({'createdat': 1});
+    const transcripts = await Transcript.find({ 'modmailId': modmailID, 'GuildSnowflake': guild }).sort({'createdat': 1});
     res.status(200).json(transcripts);
 
   } catch (e) {
@@ -33,8 +34,18 @@ async function GetTranscripts(req, res) {
 
 async function GetMailIds(req, res) {
 
+  const guild = req.params.guild;
+
+  // Guard if the modmail id is undefined
+  if (guild === undefined) {
+    res.status(404);
+    res.json({'status': 404, 'error': 'Could not find that modmail'});
+    return;
+  }
+
+
   try {
-    let modmailIds = await Transcript.aggregate([
+    let modmailIds = await Transcript.find({'GuildSnowflake': guild}).aggregate([
       { 
         $group: {
           "_id": {
