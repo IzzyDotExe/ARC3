@@ -341,5 +341,23 @@ public class UtilityModule : ArcModule {
     await ctx.RespondAsync($"{user.Mention}'s blacklist was cleared", ephemeral: true);
 
   }
+
+  [SlashCommand("whitelist", "add a user to the mod whitelist"), RequireUserPermission(GuildPermission.Administrator)]
+  public async Task WhiteListCommand(SocketUser user) {
+    var guild = await DbService.GetItemsAsync<GuildInfo>("Guilds");
+    var self = guild.First(x => x.GuildSnowflake == Context.Guild.Id.ToString());
+    var mods = self.Moderators;
+
+    if (mods.Contains(user.Id.ToString())) {
+      mods.Remove(user.Id.ToString());
+      await Context.Interaction.RespondAsync("User was unwhitelisted");
+    } else {
+      mods.Add(user.Id.ToString());
+      await Context.Interaction.RespondAsync("User was whitelisted");
+    }
+
+    await DbService.UpdateModList(Context.Guild.Id.ToString(), mods);
+
+  }
   
 }

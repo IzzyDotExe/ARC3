@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using Arc3.Core.Schema;
 using arc3.Core.Schema;
+using System.Runtime.InteropServices;
 
 namespace Arc3.Core.Services;
 
@@ -266,6 +267,13 @@ public class DbService : ArcService {
     var collection = GetCollection<GuildInfo>("Guilds");
     var filter = Builders<GuildInfo>.Filter.Where(x => x.GuildSnowflake == guild);
     var upd = Builders<GuildInfo>.Update.Set(x => x.Premium, premium);
+    await collection.UpdateOneAsync(filter, upd);
+  }
+
+  public async Task UpdateModList(string guild, List<string> mods) {
+    var collection = GetCollection<GuildInfo>("Guilds");
+    var filter = Builders<GuildInfo>.Filter.Where(x => x.GuildSnowflake == guild);
+    var upd = Builders<GuildInfo>.Update.Set(x => x.Moderators, mods);
     await collection.UpdateOneAsync(filter, upd);
   }
 
