@@ -3,7 +3,7 @@ const Transcript = require('../db/Transcript.js');
 async function GetTranscripts(req, res) {
 
   const modmailID = req.params.mailId;
-  const guild = req.params.guild;
+  const guild = req.params.guildid;
 
   // Guard if the modmail id is undefined
   if (modmailID === undefined || guild === undefined) {
@@ -34,7 +34,7 @@ async function GetTranscripts(req, res) {
 
 async function GetMailIds(req, res) {
 
-  const guild = req.params.guild;
+  const guild = req.params.guildid;
 
   // Guard if the modmail id is undefined
   if (guild === undefined) {
