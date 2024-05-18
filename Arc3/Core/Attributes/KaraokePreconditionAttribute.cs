@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Arc3.Core.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-public class KaraokePreconditionCheck(bool respectLock = true) : PreconditionAttribute
+public class KaraokePreconditionAttribute(bool respectLock = true) : PreconditionAttribute
 {
 
     private bool _respectLock = respectLock;
