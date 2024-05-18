@@ -5,6 +5,7 @@ const Appeals = require('./routers/AppealsRoutes.js');
 const Notes = require('./routers/UsernoteRoutes.js');
 
 const router = express.Router();
+
 router.use(express.json());
 router.use(express.urlencoded({extended: true}));
 

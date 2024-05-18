@@ -119,4 +119,43 @@ async function GetGuild(req, res) {
 
 }
 
-module.exports = { GetUser, GetGuild, GetMe }; 
+async function GetGuilds(req, res) {
+
+  var self = await req.state.self()
+  var cacheKey = self.id + "guilds"
+
+  try {
+    
+    if (discordCache[cacheKey]) {
+      discordCache[cacheKey]['cached'] = true;
+      res.status(200).json(discordCache[cacheKey]);
+      return;
+    }
+
+    axios.get(`https://discord.com/api/users/@me/guilds`, options).then(json => {
+      
+      if (!discordCache[cacheKey])
+        discordCache[cacheKey] = json.data;
+
+      discordCache[cacheKey]['cached'] = false;
+      res.status(200).json(discordCache[cacheKey]);
+
+    }).catch(err => {
+      res.status(500).json({
+        status: 500,
+        error: "An error occured, try again later!"
+      })  
+    })
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).json({
+      status: 500,
+      error: "An error occured, try again later!"
+    })
+
+  }
+}
+
+module.exports = { GetUser, GetGuild, GetMe, GetGuilds }; 
