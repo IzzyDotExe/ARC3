@@ -44,7 +44,6 @@ app.get('/*/notes/*', authenticated, whitelist, (req, res) => {
   res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
 })
 
-
 // Authenticate the rest of the client.
 app.get('/*', authenticated,  (req, res) => {
 
