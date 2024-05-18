@@ -40,24 +40,21 @@ public static class ModMailExt
             .Build();
 
         var channel = await self.GetChannel(clientInstance);
+        
+        var transcript = new Transcript {
+            Id = msg.Id.ToString(),
+            ModMailId = self.Id,
+            SenderSnowfake = ((long)msg.Author.Id),
+            AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
+            CreatedAt = msg.CreatedAt.UtcDateTime,
+            GuildSnowflake = ((long)channel.Guild.Id),
+            MessageContent = msg.Content,
+            TranscriptType = "Modmail"
+        };
 
-        // TODO: Transcripts for all
-        if (channel.GuildId == 569929112932712469)
-        {
-            var transcript = new Transcript {
-                Id = msg.Id.ToString(),
-                ModMailId = self.Id,
-                SenderSnowfake = ((long)msg.Author.Id),
-                AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
-                CreatedAt = msg.CreatedAt.UtcDateTime,
-                GuildSnowflake = ((long)channel.Guild.Id),
-                MessageContent = msg.Content,
-                TranscriptType = "Modmail"
-            };
+        await dbService.AddTranscriptAsync(transcript);
 
-            await dbService.AddTranscriptAsync(transcript);
-
-        }
+        
     
 
         // Send the message
@@ -142,23 +139,20 @@ public static class ModMailExt
         
         var channel = await self.GetChannel(clientInstance);
 
-        // TODO: Transcripts for all
-        if (channel.GuildId == 569929112932712469)
-        {
-            var transcript = new Transcript {
-                Id = msg.Id.ToString(),
-                ModMailId = self.Id,
-                SenderSnowfake = ((long)msg.Author.Id),
-                AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
-                CreatedAt = msg.CreatedAt.UtcDateTime,
-                GuildSnowflake = ((long)channel.Guild.Id),
-                MessageContent = msg.Content,
-                TranscriptType = "Modmail"
-            };
+        var transcript = new Transcript {
+            Id = msg.Id.ToString(),
+            ModMailId = self.Id,
+            SenderSnowfake = ((long)msg.Author.Id),
+            AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
+            CreatedAt = msg.CreatedAt.UtcDateTime,
+            GuildSnowflake = ((long)channel.Guild.Id),
+            MessageContent = msg.Content,
+            TranscriptType = "Modmail"
+        };
 
-            await dbService.AddTranscriptAsync(transcript);
+        await dbService.AddTranscriptAsync(transcript);
 
-        }
+    
         
 
         if (msg.Attachments.Count > 0)
@@ -197,7 +191,7 @@ public static class ModMailExt
                         .WithButton("Save and Close", 
                                     $"modmail.save.{self.Id}",
                                     ButtonStyle.Secondary,
-                                    new Emoji("📝"), disabled: guild != 569929112932712469)
+                                    new Emoji("📝"))
                         .WithButton("Close",
                                     $"modmail.close.{self.Id}",
                                     ButtonStyle.Danger,
