@@ -10,7 +10,7 @@ import {TranscriptMemberComponent} from '../components/TranscriptMemberComponent
 
 export default function Notes() {
 
-  const {guild} = useParams();
+  const {guild, userid} = useParams();
   const [notesUsers, setNoteUsers] = useState([]);
 
   useEffect(() => {
@@ -32,7 +32,10 @@ export default function Notes() {
       <main>
         <div className="NotesPick">
           <div className = "sidebar">
-            {notesUsers.map(x => <a href={`/${guild}/notes/${x}`}><TranscriptMemberComponent userid={x}/></a>)}
+            {notesUsers.map(x => {
+              return <a href={`/${guild}/notes/${x}`}><TranscriptMemberComponent style={x == userid ? {"border": "2px solid red"} : {}} userid={x}/></a>
+            })
+            }
           </div>
           
           <div className = "notes-sec">

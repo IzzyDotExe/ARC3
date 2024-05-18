@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 
-export function TranscriptMemberComponent({userid}) {
+export function TranscriptMemberComponent({userid, style}) {
 
   const [user, setUser] = useState(null);
 
@@ -15,7 +15,7 @@ export function TranscriptMemberComponent({userid}) {
   }, [userid])
 
   return (
-    <div className="user-tr">
+    <div className="user-tr" style={style}>
       <img className="icon-tr" src={Avatar} alt={`${UserName}'s img`}/>
       <p>{UserName}</p>
     </div>
