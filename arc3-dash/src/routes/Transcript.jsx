@@ -10,6 +10,7 @@ export default function Transcript() {
 
   // Get the ID of the modmail
   const mailId = useParams()['*'];
+  const {guildid} = useParams();
   
   const [modmail, setModmail] = useState([]);
   const [guild, setGuild] = useState(null);
@@ -20,14 +21,14 @@ export default function Transcript() {
   useEffect(() => {
     setSideBar(false);
     // Fetch all the messages from the transcript
-    axios.get(`/api/transcripts/${mailId}/`).then(res => {
+    axios.get(`/api/transcripts/${guildid}/${mailId}/`).then(res => {
       setModmail(res.data);
-      axios.get(`/api/discord/guilds/${res.data[0].GuildSnowflake}/`).then(res => {
+      axios.get(`/api/discord/guilds/${guildid}/`).then(res => {
         setGuild(res.data);
       })
     });
 
-  }, [mailId]);
+  }, [mailId, guildid]);
 
   return (
     <>

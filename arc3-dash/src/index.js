@@ -35,6 +35,11 @@ function App() {
       },
 
       {
+        path: "/:guildid",
+        element: <Home/>
+      },
+
+      {
         path: "/:guild/notes/",
         element: <Notes/>,
         children: [
@@ -46,7 +51,7 @@ function App() {
       },
       
       {
-        path: "/transcripts",
+        path: "/:guildid/transcripts",
         element: <Transcripts/>,
         children: [
           {
@@ -55,23 +60,7 @@ function App() {
           }
         ]
       },
-  
-      {
-        path: "/appeals",
-        element: <Appeals self={self}/>
-      },
-  
-      {
-        path: "/appeal",
-        element: <Appeal />
-      }, 
 
-      {
-        path: "/notes",
-        element: <Notes/>
-
-      }
-  
     ]
   );
   

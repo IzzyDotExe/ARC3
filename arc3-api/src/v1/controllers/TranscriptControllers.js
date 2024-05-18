@@ -15,7 +15,7 @@ async function GetTranscripts(req, res) {
   // Try and get the transcripts and send them
   try {
 
-    const transcripts = await Transcript.find({ 'modmailId': modmailID, 'GuildSnowflake': guild }).sort({'createdat': 1});
+    const transcripts = await Transcript.find({ 'modmailId': modmailID}).sort({'createdat': 1});
     res.status(200).json(transcripts);
 
   } catch (e) {
@@ -43,9 +43,8 @@ async function GetMailIds(req, res) {
     return;
   }
 
-
   try {
-    let modmailIds = await Transcript.find({'GuildSnowflake': guild}).aggregate([
+    let modmailIds = await Transcript.aggregate([
       { 
         $group: {
           "_id": {
@@ -82,8 +81,8 @@ async function GetMailIds(req, res) {
         }),
         date: x["Created"]["createdAt"]
       }
-    })
-    
+    }).filter(x => x.GuildSnowflake == guild);
+
     res.status(200).json(modmailIds)
   } catch (e) {
     console.error(e.message);
