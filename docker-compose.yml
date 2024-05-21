@@ -66,6 +66,30 @@ services:
     networks:
       - common-net
 
+  arc-tasks:
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    image: arc-tasks
+    build: 
+      dockerfile: arc3-tasks.Dockerfile
+    container_name: arc3-tasks
+    networks:
+      - common-net
+    command: clean-db
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    depends_on:
+      - arc3
+    command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      ofelia.job-local.my-test-job.schedule: "@every 5s"
+      ofelia.job-local.my-test-job.command: "uname -a"
+
 networks:
   common-net: {}
 
