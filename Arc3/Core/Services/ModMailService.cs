@@ -355,7 +355,7 @@ public class ModMailService : ArcService
         var embed = new EmbedBuilder()
             .WithModMailStyle(_clientInstance)
             .WithTitle("Modmail Transcript")
-            .WithDescription($"**Modmail with:** {user.Mention}\n**Saved** <t:{DateTimeOffset.Now.ToUnixTimeSeconds()}:R> **by** {s.Mention}\n\n[Transcript]({HOSTED_URL}/transcripts/{m.Id})")
+            .WithDescription($"**Modmail with:** {user.Mention}\n**Saved** <t:{DateTimeOffset.Now.ToUnixTimeSeconds()}:R> **by** {s.Mention}\n\n[Transcript]({HOSTED_URL}/{guild.id}/transcripts/{m.Id})")
             .Build();
 
         await ((SocketTextChannel)transcriptchannel).SendMessageAsync(embed: embed);
