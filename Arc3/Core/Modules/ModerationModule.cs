@@ -160,7 +160,8 @@ public class ModerationModule : ArcModule
   
   [UserCommand("Jail User"), 
    SlashCommand("jail", "Send a user to jail"),
-   RequireUserPermission(GuildPermission.MuteMembers)]
+   RequireUserPermission(GuildPermission.MuteMembers),
+   RequirePremium]
   public async Task JailUser(SocketUser user) {
   
     // Fetch the interaction and defer it.
@@ -189,7 +190,8 @@ public class ModerationModule : ArcModule
   
   [UserCommand("Unjail User"), 
    SlashCommand("unjail", "Take a user out of jail"),
-   RequireUserPermission(GuildPermission.MuteMembers)]
+   RequireUserPermission(GuildPermission.MuteMembers),
+   RequirePremium]
   public async Task UnjailUser(SocketUser user)
   {
     
@@ -226,7 +228,8 @@ public class ModerationModule : ArcModule
   #endregion
 
   [SlashCommand("diagnose", "Diagnose a modmail channel"),
-  RequireUserPermission(GuildPermission.ManageMessages)]
+  RequireUserPermission(GuildPermission.ManageMessages),
+  RequirePremium]
   public async Task DiagnoseModmail()
   {
     var mails = await DbService.GetModMails();
@@ -269,7 +272,8 @@ public class ModerationModule : ArcModule
 
 
   [SlashCommand("dispose", "Dispose a modmail channel"),
-  RequireUserPermission(GuildPermission.ManageChannels)]
+  RequireUserPermission(GuildPermission.ManageChannels),
+  RequirePremium]
   public async Task DisposeModmail()
   {
     var mails = await DbService.GetModMails();
