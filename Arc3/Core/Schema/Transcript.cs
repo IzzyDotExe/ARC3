@@ -31,4 +31,7 @@ public class Transcript {
   [BsonElement("transcripttype")]
   public string TranscriptType { get; set; }
 
+  [BsonElement("comment")]
+  public bool Comment {get; set;} = false;
+
 }

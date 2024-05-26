@@ -8,8 +8,11 @@ const TranscriptSchema = new mongoose.Schema({
   createdat: Date,
   GuildSnowflake: String,
   messagecontent: String,
-  transcripttype: String
+  transcripttype: String,
+  comment: Bool
 
+}, {
+  collection: "Transcripts"
 });
 
 const Transcript = mongoose.model('Transcript', TranscriptSchema);
