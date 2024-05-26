@@ -214,9 +214,11 @@ public class ModerationModule : ArcModule
     var channel = await jail.GetChannel(_clientInstance);
 
     // remove the user's permission to speak
-    var perm =  new OverwritePermissions(sendMessages: PermValue.Allow);
+    var perm =  new OverwritePermissions(sendMessages: PermValue.Allow, viewChannel: PermValue.Allow, useApplicationCommands: PermValue.Deny);
     await channel.AddPermissionOverwriteAsync(user, perm);
 
+    await ctx.FollowupAsync($"{user.Mention} was unmuted!", ephemeral: true);
+   
   }
 
   [SlashCommand("jailmute", "Mute a user inside of their jail channel"),
@@ -246,8 +248,10 @@ public class ModerationModule : ArcModule
     var channel = await jail.GetChannel(_clientInstance);
 
     // remove the user's permission to speak
-    var perm =  new OverwritePermissions(sendMessages: PermValue.Deny);
+    var perm =  new OverwritePermissions(sendMessages: PermValue.Deny, viewChannel: PermValue.Allow, useApplicationCommands: PermValue.Deny);
     await channel.AddPermissionOverwriteAsync(user, perm);
+ 
+    await ctx.FollowupAsync($"{user.Mention} was muted!", ephemeral: true);
 
   }
 
