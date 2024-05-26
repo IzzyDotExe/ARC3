@@ -187,11 +187,10 @@ public class ModerationModule : ArcModule
 
   }
 
-    [UserCommand("Jail Unute"),
-  SlashCommand("jailunmute", "Unute a user inside of their jail channel"),
+  [SlashCommand("jailunmute", "Unute a user inside of their jail channel"),
   RequireUserPermission(GuildPermission.MuteMembers),
   RequirePremium]
-  public async Task JailMute(SocketUser user) {
+  public async Task JailUnmute(SocketUser user) {
 
     // Fetch the interaction and defer it.
     var ctx = Context.Interaction; 
@@ -220,8 +219,7 @@ public class ModerationModule : ArcModule
 
   }
 
-  [UserCommand("Jail Mute"),
-  SlashCommand("jailmute", "Mute a user inside of their jail channel"),
+  [SlashCommand("jailmute", "Mute a user inside of their jail channel"),
   RequireUserPermission(GuildPermission.MuteMembers),
   RequirePremium]
   public async Task JailMute(SocketUser user) {
