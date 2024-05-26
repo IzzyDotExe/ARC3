@@ -9,7 +9,7 @@ const TranscriptSchema = new mongoose.Schema({
   GuildSnowflake: String,
   messagecontent: String,
   transcripttype: String,
-  comment: Bool
+  comment: Boolean
 
 }, {
   collection: "Transcripts"
