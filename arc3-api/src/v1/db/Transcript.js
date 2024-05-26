@@ -10,9 +10,6 @@ const TranscriptSchema = new mongoose.Schema({
   messagecontent: String,
   transcripttype: String,
   comment: Boolean
-
-}, {
-  collection: "Transcripts"
 });
 
 const Transcript = mongoose.model('Transcript', TranscriptSchema);
