@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using Arc3.Core.Ext;
 using Arc3.Core.Schema;
 using Arc3.Core.Schema.Ext;
@@ -246,8 +247,10 @@ public class ModMailService : ArcService
                 return;
                 
             // Quit if the message is commented
-            if (arg.Content.StartsWith('#'))
+            if (arg.Content.StartsWith('#')) {
+                await HandleMailChannelCommentMessage(arg);
                 return;
+            }
             
             // Handle the mail message 
             await HandleMailChannelMessage(arg);
@@ -361,6 +364,41 @@ public class ModMailService : ArcService
         await ((SocketTextChannel)transcriptchannel).SendMessageAsync(embed: embed);
     }
     
+    private async Task HandleMailChannelCommentMessage(SocketMessage msg)
+    {
+        
+        var mails = await _dbService.GetModMails();
+        ModMail mail;
+        try
+        {
+            mail = mails.First(x => x.ChannelSnowflake == (long)msg.Channel.Id);
+
+            var channel = await mail.GetChannel(_clientInstance);
+                        
+            var transcript = new Transcript {
+                Id = msg.Id.ToString(),
+                ModMailId = mail.Id,
+                SenderSnowfake = ((long)msg.Author.Id),
+                AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
+                CreatedAt = msg.CreatedAt.UtcDateTime,
+                GuildSnowflake = ((long)channel.Guild.Id),
+                MessageContent = msg.Content,
+                TranscriptType = "Modmail",
+                Comment = true
+            };
+
+            await _dbService.AddTranscriptAsync(transcript);
+
+        }
+        catch (InvalidOperationException ex)
+        {
+            // No modmail exists
+            // Console.WriteLine($"Failed to get modmail {ex}");
+            return;
+        }
+
+    }
+
     private async Task HandleMailChannelMessage(SocketMessage msg)
     {
     
