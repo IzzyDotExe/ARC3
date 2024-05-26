@@ -187,6 +187,72 @@ public class ModerationModule : ArcModule
 
   }
 
+    [UserCommand("Jail Unute"),
+  SlashCommand("jailunmute", "Unute a user inside of their jail channel"),
+  RequireUserPermission(GuildPermission.MuteMembers),
+  RequirePremium]
+  public async Task JailMute(SocketUser user) {
+
+    // Fetch the interaction and defer it.
+    var ctx = Context.Interaction; 
+    await ctx.DeferAsync(true);
+    
+    // Get all the jails.
+    var jails = await DbService.GetJailsAsync();
+    
+    /* Guard so that the user is actually jailed */
+    if (jails.All(x => x.UserSnowflake != (long)user.Id))
+    {
+      // If they are not the send the error
+      await ctx.FollowupAsync("Could not jail mute that user! They might not be jailed.", ephemeral: true);
+      return;
+    }
+       
+    // get the jail
+    var jail = jails.First(x => x.UserSnowflake == (long)user.Id);
+
+    // Get the jail channel
+    var channel = await jail.GetChannel(_clientInstance);
+
+    // remove the user's permission to speak
+    var perm =  new OverwritePermissions(sendMessages: PermValue.Allow);
+    await channel.AddPermissionOverwriteAsync(user, perm);
+
+  }
+
+  [UserCommand("Jail Mute"),
+  SlashCommand("jailmute", "Mute a user inside of their jail channel"),
+  RequireUserPermission(GuildPermission.MuteMembers),
+  RequirePremium]
+  public async Task JailMute(SocketUser user) {
+
+    // Fetch the interaction and defer it.
+    var ctx = Context.Interaction; 
+    await ctx.DeferAsync(true);
+    
+    // Get all the jails.
+    var jails = await DbService.GetJailsAsync();
+    
+    /* Guard so that the user is actually jailed */
+    if (jails.All(x => x.UserSnowflake != (long)user.Id))
+    {
+      // If they are not the send the error
+      await ctx.FollowupAsync("Could not jail mute that user! They might not be jailed.", ephemeral: true);
+      return;
+    }
+       
+    // get the jail
+    var jail = jails.First(x => x.UserSnowflake == (long)user.Id);
+
+    // Get the jail channel
+    var channel = await jail.GetChannel(_clientInstance);
+
+    // remove the user's permission to speak
+    var perm =  new OverwritePermissions(sendMessages: PermValue.Deny);
+    await channel.AddPermissionOverwriteAsync(user, perm);
+
+  }
+
   
   [UserCommand("Unjail User"), 
    SlashCommand("unjail", "Take a user out of jail"),
@@ -222,8 +288,8 @@ public class ModerationModule : ArcModule
       await ctx.User.SendMessageAsync($"{user.Mention} was unjailed!");
     }
    
-
   }
+
   
   #endregion
 
