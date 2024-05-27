@@ -86,6 +86,14 @@ public class ModMailService : ArcService
             return;
  
         var guild_id = arg.Data.Values.First();
+
+        var blacklist = await _dbService.GetItemsAsync<Blacklist>("blacklist");
+        if (blacklist.Any(x =>
+                x.GuildSnowflake == long.Parse(guild_id) && x.UserSnowflake == ((long)arg.User.Id) &&
+                x.Command is "all" or "modmail"))
+        {
+            await arg.RespondAsync("You are blacklisted from using modmail", ephemeral: true);
+        }
         
         ModMail? modmail = null;
         try {
@@ -233,7 +241,7 @@ public class ModMailService : ArcService
 
     private async Task ClientInstanceOnMessageReceived(SocketMessage arg)
     {
-     
+
         // Non private messages are handled as from a moderator
         if (arg.Channel.GetChannelType() != ChannelType.DM)
         {
