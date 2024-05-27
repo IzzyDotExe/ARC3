@@ -8,7 +8,7 @@ public class Blacklist
 
   [BsonId]
   [BsonRepresentation(BsonType.String)]
-  public string Id { get; set; } = string.Empty;
+  public ObjectId Id { get; set; }
 
   [BsonElement("usersnowflake")]
   public long UserSnowflake { get; set; }
