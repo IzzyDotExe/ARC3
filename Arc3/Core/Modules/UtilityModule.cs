@@ -299,7 +299,7 @@ public class UtilityModule : ArcModule {
     }
 
     var blacklist = new Blacklist() {
-      Id = Guid.NewGuid().ToString(),
+      Id = new ObjectId(Guid.NewGuid().ToString()),
       UserSnowflake = ((long)user.Id),
       GuildSnowflake = ((long)Context.Guild.Id),
       Command = cmd
