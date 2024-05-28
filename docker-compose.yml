@@ -66,6 +66,38 @@ services:
     networks:
       - common-net
 
+  arc-tasks:
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    image: arc-tasks
+    build: 
+      dockerfile: arc3-tasks.Dockerfile
+    container_name: arc3-tasks
+    networks:
+      - common-net
+    command: keepalive.js
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.data-compliance.schedule: "@every 12h"
+      ofelia.job-exec.data-compliance.command: "node data-compliance.js"
+      ofelia.job-exec.backup-db.schedule: "@every 24h"
+      ofelia.job-exec.backup-db.command: "node backup-db.js Guilds appeals comments guild_configs transcripts user_notes"
+    volumes:
+      - ./db-backups:/app/out
+
+  scheduler:
+    container_name: scheduler
+    networks:
+      - common-net
+    image: mcuadros/ofelia:latest
+    depends_on:
+      - arc-tasks
+    command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
 networks:
   common-net: {}
 

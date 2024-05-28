@@ -1,0 +1,17 @@
+{
+  "name": "arc3-tasks",
+  "version": "1.0.0",
+  "description": "Various scripts for the arc system",
+  "main": "backup-db.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.15.2",
+    "mongodb": "^6.6.2",
+    "node-tar": "^1.0.0",
+    "tar": "^7.1.0"
+  }
+}
