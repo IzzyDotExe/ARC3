@@ -144,7 +144,8 @@ public class UtilityModule : ArcModule {
   }
 
   [SlashCommand("setconfig", "Set a config string for the guild"),
-   RequireUserPermission(GuildPermission.ManageGuild)]
+   RequireUserPermission(GuildPermission.ManageGuild),
+   RequirePremium]
   public async Task SetConfigCommand(
     string configKey,
     string configValue
@@ -178,7 +179,8 @@ public class UtilityModule : ArcModule {
   }
 
   [SlashCommand("getconfig", "Get a config string for the guilds"),
-   RequireUserPermission(GuildPermission.ManageGuild)]
+   RequireUserPermission(GuildPermission.ManageGuild),
+   RequirePremium]
   public async Task GetConfigCommand(
     string configKey
   ) {
@@ -297,7 +299,6 @@ public class UtilityModule : ArcModule {
     }
 
     var blacklist = new Blacklist() {
-      Id = Guid.NewGuid().ToString(),
       UserSnowflake = ((long)user.Id),
       GuildSnowflake = ((long)Context.Guild.Id),
       Command = cmd

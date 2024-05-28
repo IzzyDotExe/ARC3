@@ -175,7 +175,7 @@ public static class ModMailExt
             new EmbedBuilder()
                 .WithModMailStyle(clientInstance)
                 .WithTitle("Modmail")
-                .WithDescription($"A Modmail sesseion was opened by {user.Mention}")
+                .WithDescription($"A Modmail session was opened by {user.Mention}")
                 .Build()
             :
             new EmbedBuilder()

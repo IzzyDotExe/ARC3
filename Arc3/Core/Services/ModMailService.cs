@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using Arc3.Core.Ext;
 using Arc3.Core.Schema;
 using Arc3.Core.Schema.Ext;
@@ -86,6 +87,14 @@ public class ModMailService : ArcService
             return;
  
         var guild_id = arg.Data.Values.First();
+
+        var blacklist = await _dbService.GetItemsAsync<Blacklist>("blacklist");
+        if (blacklist.Any(x =>
+                x.GuildSnowflake == long.Parse(guild_id) && x.UserSnowflake == ((long)arg.User.Id) &&
+                x.Command is "all" or "modmail"))
+        {
+            await arg.RespondAsync("You are blacklisted from using modmail", ephemeral: true);
+        }
         
         ModMail? modmail = null;
         try {
@@ -233,7 +242,7 @@ public class ModMailService : ArcService
 
     private async Task ClientInstanceOnMessageReceived(SocketMessage arg)
     {
-     
+
         // Non private messages are handled as from a moderator
         if (arg.Channel.GetChannelType() != ChannelType.DM)
         {
@@ -246,8 +255,10 @@ public class ModMailService : ArcService
                 return;
                 
             // Quit if the message is commented
-            if (arg.Content.StartsWith('#'))
+            if (arg.Content.StartsWith('#')) {
+                await HandleMailChannelCommentMessage(arg);
                 return;
+            }
             
             // Handle the mail message 
             await HandleMailChannelMessage(arg);
@@ -355,12 +366,47 @@ public class ModMailService : ArcService
         var embed = new EmbedBuilder()
             .WithModMailStyle(_clientInstance)
             .WithTitle("Modmail Transcript")
-            .WithDescription($"**Modmail with:** {user.Mention}\n**Saved** <t:{DateTimeOffset.Now.ToUnixTimeSeconds()}:R> **by** {s.Mention}\n\n[Transcript]({HOSTED_URL}/transcripts/{m.Id})")
+            .WithDescription($"**Modmail with:** {user.Mention}\n**Saved** <t:{DateTimeOffset.Now.ToUnixTimeSeconds()}:R> **by** {s.Mention}\n\n[Transcript]({HOSTED_URL}/{guild.Id}/transcripts/{m.Id})")
             .Build();
 
         await ((SocketTextChannel)transcriptchannel).SendMessageAsync(embed: embed);
     }
     
+    private async Task HandleMailChannelCommentMessage(SocketMessage msg)
+    {
+        
+        var mails = await _dbService.GetModMails();
+        ModMail mail;
+        try
+        {
+            mail = mails.First(x => x.ChannelSnowflake == (long)msg.Channel.Id);
+
+            var channel = await mail.GetChannel(_clientInstance);
+                        
+            var transcript = new Transcript {
+                Id = msg.Id.ToString(),
+                ModMailId = mail.Id,
+                SenderSnowfake = ((long)msg.Author.Id),
+                AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
+                CreatedAt = msg.CreatedAt.UtcDateTime,
+                GuildSnowflake = ((long)channel.Guild.Id),
+                MessageContent = msg.Content,
+                TranscriptType = "Modmail",
+                Comment = true
+            };
+
+            await _dbService.AddTranscriptAsync(transcript);
+
+        }
+        catch (InvalidOperationException ex)
+        {
+            // No modmail exists
+            // Console.WriteLine($"Failed to get modmail {ex}");
+            return;
+        }
+
+    }
+
     private async Task HandleMailChannelMessage(SocketMessage msg)
     {
     
