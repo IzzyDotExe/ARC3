@@ -6,4 +6,4 @@ RUN node --max-old-space-size=1000 $(which npm) ci
 
 COPY ./arc3-tasks .
 
-ENTRYPOINT [ "node" ]
+ENTRYPOINT [ "tail", "-f", "/dev/null" ]
