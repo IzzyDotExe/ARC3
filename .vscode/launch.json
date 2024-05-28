@@ -17,6 +17,15 @@
       "cwd": "${workspaceFolder}/arc3-api",
       "restart": true,
       "envFile": "${workspaceFolder}/.env",
+    },
+    {
+      "name": "Node File",
+      "program": "${file}",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
     }
   ]
 }
