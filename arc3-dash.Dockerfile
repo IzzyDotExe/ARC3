@@ -3,7 +3,7 @@ FROM node AS build-step
 WORKDIR /app
 
 COPY ./arc3-dash/package.json .
-RUN npm i
+RUN npm ci
 
 COPY ./arc3-dash/ .
 
