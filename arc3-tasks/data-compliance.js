@@ -13,17 +13,18 @@ async function run(collections) {
   const collection = db.collection("transcripts");
 
   // Delete all docs older than 30 days
-  collection.deleteMany( { createdat : {"$lt" : new Date(Date.now() - 30*24*60*60 * 1000) } })
-
+  var del = await collection.deleteMany( { createdat : {"$lt" : new Date(Date.now() - 30*24*60*60 * 1000) } })
+  if (del.acknowledged) {
+    console.log(`Deleted ${del.deletedCount} records over 30 days old`);
+  } else {
+    console.log(`Delete not acknowledged`)
+  }
+  await client.close()
 }
 
 client.connect().then(x => {
   
   run().then(x => {
-
-    setTimeout(async () => {
-      await client.close()
-    }, 3000)
     
   }).catch(console.dir)
     

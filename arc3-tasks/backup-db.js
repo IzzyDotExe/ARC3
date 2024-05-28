@@ -22,10 +22,12 @@ async function run(collections) {
 
     const db = client.db('Arc3');
     const files = []
+    let proc = 0;
 
     // Go through all the tables that have data that is temp (Modmails, Jails, Appeals, Karaoke)
     collections.forEach(async x => {
       const collection = db.collection(x);
+      
 
       const data = await collection.find();
       const items = []
@@ -39,28 +41,35 @@ async function run(collections) {
 
       const json = JSON.stringify(items);
 
-      fs.writeFile(`./bkup/${x}.json`, json, 'utf8', () => {
+      fs.writeFile(`./bkup/${x}.json`, json, 'utf8', async () => {
+
+        proc++;
+
+        if (proc === collections.length) {
+          tar.create(
+            { file: `./out/backup-${Date.now()}.tar.gz`, gzip: true },
+            ['./bkup']
+          ).then(async _ => {
+            await client.close()
+            console.log(`Saved ${proc} collections`)
+          })
+        }
+
       })      
 
+
+
+
     })
+
+
 
 }
 
 client.connect().then(x => {
   
   run(it).then(x => {
-    setTimeout(async () => {
-      await client.close()
 
-      tar.create(
-        { file: `./out/backup-${Date.now()}.tar.gz`, gzip: true },
-        ['./bkup']
-      ).then(_ => {
-
-      })
-
-    }, 5000);
-    
   }).catch(console.dir)
     
 });

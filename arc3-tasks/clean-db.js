@@ -19,14 +19,24 @@ const client = new MongoClient(uri);
 async function run(collections) {
 
     const db = client.db('Arc3');
-
+    let proc = 0;
     // Go through all the tables that have data that is temp (Modmails, Jails, Appeals, Karaoke)
     collections.forEach(async x => {
+
       const collection = db.collection(x);
 
       // Clean out all of that data.
-      await collection.drop();
+      var dr = await collection.drop();
+      if (dr) {
+        console.log(`Successfully cleaned collection: ${x}`);
+      }
 
+      proc++;
+
+      if (proc === collections.length) {
+        console.log("DB cleaned, closing")
+        await client.close();
+      }
     })
 
 }
@@ -34,10 +44,6 @@ async function run(collections) {
 client.connect().then(x => {
   
   run(it).then(x => {
-
-    setTimeout(async () => {
-      await client.close()
-    }, 3000)
     
   }).catch(console.dir)
     
