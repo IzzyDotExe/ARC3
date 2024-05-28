@@ -77,7 +77,6 @@ services:
     container_name: arc3-tasks
     networks:
       - common-net
-    command: keepalive.js
     labels:
       ofelia.enabled: "true"
       ofelia.job-exec.data-compliance.schedule: "@every 12h"
