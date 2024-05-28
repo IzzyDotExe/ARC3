@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mongodb": "^6.6.2"
+    "discord.js": "^14.15.2",
+    "mongodb": "^6.6.2",
+    "node-tar": "^1.0.0",
+    "tar": "^7.1.0"
   }
 }
