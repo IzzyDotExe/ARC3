@@ -37,9 +37,32 @@ HOSTED_URL="<base_uri>" # the base uri where the client and server are hosted.
 
 Then, simply install docker and docker compose and then run it with this command.
 ```
-docker compose up
+docker compose up -d
 ```
 
+## Components
+
+![Untitled Diagram drawio](https://github.com/IzzyDotExe/ARC3/assets/44146685/a109f9aa-51c6-4270-84bb-a865214e9c2c)
+
+### Arc3 + Discord Bot Client
+
+Arc3 is a discord bot written in C# using the Discord.NET library to control the discord bot client. It interacts with the mongodb database as it's sole source of truth. 
+
+### Arc3-api
+
+Arc3-Api is an api written in expressJS that serves information from the mongo databse. It provides all the necessay routes for `Arc3-Dash` to work which is the web frontend. Arc3-Api serves the frontend at the root / http route and also uses oauth2 authentication to protect routes.
+
+### Arc3-dash
+
+Arc3-Dash is a web frontend dashboard to manage and visualize data in the Arc3 system. Importantly, it is served by the `Arc3-Api` and thus levereages the same authentication available through that.
+
+### Arc3-tasks
+
+Arc3-Tasks is a collection of node scripts that perform various useful actions for the arc system such as backups, restores, cleanup, data compliance, etc...
+
+### Ofelia Scheduler
+
+This is a scheduler component that is used to trigger various actions inside of `Arc3-Tasks` by default it does an automated backup every 24 hours and a cleanup of data every 12 hours.
 
 ## Development
 
