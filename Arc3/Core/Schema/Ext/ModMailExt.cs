@@ -30,32 +30,35 @@ public static class ModMailExt
         return webhook;
     }
     
-    public static async Task SendUserAsync(this ModMail self, SocketMessage msg, DiscordSocketClient clientInstance, DbService dbService)
+    public static async Task SendUserAsync(this ModMail self, SocketMessage msg, DiscordSocketClient clientInstance, DbService dbService, bool edit = false)
     {
         
         var embed = new EmbedBuilder()
             .WithModMailStyle(clientInstance)
             .WithAuthor(msg.Author.Username, msg.Author.GetDisplayAvatarUrl())
-            .WithDescription(msg.Content)
+            .WithDescription(edit? "EDIT: " + msg.Content : msg.Content)
             .Build();
 
         var channel = await self.GetChannel(clientInstance);
-        
-        var transcript = new Transcript {
-            Id = msg.Id.ToString(),
-            ModMailId = self.Id,
-            SenderSnowfake = ((long)msg.Author.Id),
-            AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
-            CreatedAt = msg.CreatedAt.UtcDateTime,
-            GuildSnowflake = ((long)channel.Guild.Id),
-            MessageContent = msg.Content,
-            TranscriptType = "Modmail"
-        };
 
-        await dbService.AddTranscriptAsync(transcript);
+        if (!edit)
+        {
+            var transcript = new Transcript
+            {
+                Id = msg.Id.ToString(),
+                ModMailId = self.Id,
+                SenderSnowfake = ((long)msg.Author.Id),
+                AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
+                CreatedAt = msg.CreatedAt.UtcDateTime,
+                GuildSnowflake = ((long)channel.Guild.Id),
+                MessageContent = msg.Content,
+                TranscriptType = "Modmail"
+            };
 
+            await dbService.AddTranscriptAsync(transcript);
+
+        }
         
-    
 
         // Send the message
         if (!string.IsNullOrWhiteSpace(msg.Content))
@@ -129,39 +132,44 @@ public static class ModMailExt
         await user.SendMessageAsync(embed: embed);
     }
 
-    public static async Task SendMods(this ModMail self, SocketMessage msg, DiscordSocketClient clientInstance, DbService dbService)
+    public static async Task SendMods(this ModMail self, SocketMessage msg, DiscordSocketClient clientInstance, DbService dbService, bool edit = false)
     {
    
 
         DiscordWebhookClient client = new DiscordWebhookClient(await self.GetWebhook(clientInstance));
 
-        await client.SendMessageAsync(msg.CleanContent, avatarUrl: msg.Author.GetDisplayAvatarUrl());
+        await client.SendMessageAsync(edit? "EDIT: " + msg.CleanContent : msg.CleanContent, avatarUrl: msg.Author.GetDisplayAvatarUrl());
         
         var channel = await self.GetChannel(clientInstance);
 
-        var transcript = new Transcript {
-            Id = msg.Id.ToString(),
-            ModMailId = self.Id,
-            SenderSnowfake = ((long)msg.Author.Id),
-            AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
-            CreatedAt = msg.CreatedAt.UtcDateTime,
-            GuildSnowflake = ((long)channel.Guild.Id),
-            MessageContent = msg.Content,
-            TranscriptType = "Modmail"
-        };
-
-        await dbService.AddTranscriptAsync(transcript);
-
-    
-        
-
-        if (msg.Attachments.Count > 0)
+        if (!edit)
         {
-            foreach (var att in msg.Attachments)
+            var transcript = new Transcript
             {
-                await client.SendMessageAsync(att.ProxyUrl, avatarUrl: msg.Author.GetDisplayAvatarUrl());
+                Id = msg.Id.ToString(),
+                ModMailId = self.Id,
+                SenderSnowfake = ((long)msg.Author.Id),
+                AttachmentURls = msg.Attachments.Select(x => x.ProxyUrl).ToArray(),
+                CreatedAt = msg.CreatedAt.UtcDateTime,
+                GuildSnowflake = ((long)channel.Guild.Id),
+                MessageContent = msg.Content,
+                TranscriptType = "Modmail"
+            };
+
+            await dbService.AddTranscriptAsync(transcript);
+            
+            if (msg.Attachments.Count > 0)
+            {
+                foreach (var att in msg.Attachments)
+                {
+                    await client.SendMessageAsync(att.ProxyUrl, avatarUrl: msg.Author.GetDisplayAvatarUrl());
+                }
             }
+            
         }
+        
+        
+        
     }
 
     public static async Task SendModMailMenu(this ModMail self, DiscordSocketClient clientInstance, Appeal? appeal = null)
