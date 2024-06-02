@@ -36,6 +36,10 @@ public class ModMailService : ArcService
 
     private async Task ClientInstanceOnMessageUpdated(Cacheable<IMessage, ulong> arg1, SocketMessage arg2, ISocketMessageChannel arg3)
     {        
+
+        var msg = await arg1.GetOrDownloadAsync();
+        if (msg.Author.IsBot)
+            return;
         
         // Non private messages are handled as from a moderator
         if (arg2.Channel.GetChannelType() != ChannelType.DM)
