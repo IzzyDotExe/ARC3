@@ -25,12 +25,47 @@ public class ModMailService : ArcService
         clientInstance.SelectMenuExecuted += ClientInstanceOnSelectMenuExecuted;
         clientInstance.ModalSubmitted += ModalInteractionCreated;
         clientInstance.UserIsTyping += ClientInstanceOnUserIsTyping;
+        clientInstance.MessageUpdated += ClientInstanceOnMessageUpdated;
         var mails = dbService.GetModMails().GetAwaiter().GetResult();
         
         foreach (var var in mails)
         {
             ActiveChannels?.Add(var.ChannelSnowflake);
         }
+    }
+
+    private async Task ClientInstanceOnMessageUpdated(Cacheable<IMessage, ulong> arg1, SocketMessage arg2, ISocketMessageChannel arg3)
+    {        
+        
+        // Non private messages are handled as from a moderator
+        if (arg2.Channel.GetChannelType() != ChannelType.DM)
+        {
+
+            if (!ActiveChannels.Contains((long)arg2.Channel.Id))
+                return;
+            
+            // Quit if the message is from a bot
+            if (arg2.Author.IsBot)
+                return;
+            
+            // Handle the mail transcript
+            await HandleMailChannelEditTranscript(arg2);
+            await HandleMailChannelMessage(arg2, edit: true);
+
+        }
+        
+        
+        // Private messages are handled as from a user
+        var mails = await _dbService.GetModMails();
+
+        if (mails.Any(x => (ulong)x.UserSnowflake == arg2.Author.Id))
+        {
+            var mail = mails.First(x => (ulong)x.UserSnowflake == arg2.Author.Id);
+            await HandleMailChannelEditTranscript(arg2);
+            await mail.SendMods(arg2, _clientInstance, _dbService, true);
+        }
+
+
     }
 
     private async Task ClientInstanceOnUserIsTyping(Cacheable<IUser, ulong> user, Cacheable<IMessageChannel, ulong> channel)
@@ -407,7 +442,7 @@ public class ModMailService : ArcService
 
     }
 
-    private async Task HandleMailChannelMessage(SocketMessage msg)
+    private async Task HandleMailChannelMessage(SocketMessage msg, bool edit = false)
     {
     
         await msg.AddReactionAsync(new Emoji("📤"));
@@ -425,7 +460,26 @@ public class ModMailService : ArcService
             return;
         }
 
-        await mail.SendUserAsync(msg, _clientInstance, _dbService);
+        await mail.SendUserAsync(msg, _clientInstance, _dbService, edit);
+    }
+
+    private async Task HandleMailChannelEditTranscript(SocketMessage msg)
+    {
+    
+        await msg.AddReactionAsync(new Emoji("✏️"));
+
+        try
+        {
+            await _dbService.UpdateTranscriptAsync(msg);
+        }
+        catch (Exception ex)
+        {
+            // No modmail exists
+            // Console.WriteLine($"Failed to get modmail {ex}");
+            await msg.RemoveReactionAsync(new Emoji("✏️"), _clientInstance.CurrentUser);
+            await msg.AddReactionAsync(new Emoji("🟡"));
+        }
+        
     }
     
 }

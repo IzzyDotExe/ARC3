@@ -196,6 +196,15 @@ public class DbService : ArcService {
     await transcriptCollection.InsertOneAsync(transcript);
   }
 
+  public async Task UpdateTranscriptAsync(SocketMessage msg)
+  {
+    IMongoCollection<Transcript> transcriptCollection = GetCollection<Transcript>("transcripts");
+    var filter = Builders<Transcript>.Filter.Where(x => x.Id == msg.Id.ToString());
+    var update = Builders<Transcript>.Update.Set(x => x.MessageContent, msg.Content)
+      .Set(x => x.AttachmentURls, msg.Attachments.Select(x => x.ProxyUrl).ToArray());
+    await transcriptCollection.UpdateOneAsync(filter, update);
+  }
+  
   public async Task<List<Jail>> GetJailsAsync() {
     
     // Get the jails colleciton
