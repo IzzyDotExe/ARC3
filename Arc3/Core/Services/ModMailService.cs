@@ -60,6 +60,11 @@ public class ModMailService : ArcService
 
         if (mails.Any(x => (ulong)x.UserSnowflake == arg2.Author.Id))
         {
+            
+            // Quit if the message is from a bot
+            if (arg2.Author.IsBot)
+                return;
+
             var mail = mails.First(x => (ulong)x.UserSnowflake == arg2.Author.Id);
             await HandleMailChannelEditTranscript(arg2);
             await mail.SendMods(arg2, _clientInstance, _dbService, true);
