@@ -86,8 +86,16 @@ jobs:
         dotnet restore
         dotnet build
       
-      
-    - name: Perform CodeQL Analysis
+    - name: Perform CodeQL Analysis CS
+      if: matrix.language == 'csharp'
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+        working-directory: Arc3
+
+    - name: Perform CodeQL Analysis
+      if: matrix.language != 'csharp'
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"
+      
