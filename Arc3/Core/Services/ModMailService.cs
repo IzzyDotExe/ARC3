@@ -327,30 +327,8 @@ public class ModMailService : ArcService
             // TODO: Insert server picking mechanism
             // For now choose the default guild
 
-            var selectmenuopts = new List<SelectMenuOptionBuilder>();
-            
-            foreach (var guild in _clientInstance.Guilds)
-            { 
-                
-                if (!_dbService.Config.ContainsKey(guild.Id))
-                    continue;
-                var guildConfig = _dbService.Config[guild.Id];
-                
-                if (!guildConfig.ContainsKey("modmailchannel"))
-                    continue;
-                
-                // Console.WriteLine(guild.Name);
-                IEmote emoji = guild.Emotes.FirstOrDefault<IEmote>(x => x.Name == "arc_icon", new Emoji("🌐"));
-                selectmenuopts.Add(new SelectMenuOptionBuilder()
-                {
-                    Description = guild.Description?[..90] + "...",
-                    Emote = emoji,
-                    IsDefault = false,
-                    Label = guild.Name,
-                    Value = guild.Id.ToString()
-                });
-            }
-            
+            var selectmenuopts = BuildModmailSelectMenu();
+
             var content = new ComponentBuilder()
                 .WithSelectMenu("modmail.select.server", selectmenuopts);
             
@@ -391,6 +369,35 @@ public class ModMailService : ArcService
         }
         
         
+    }
+
+    public List<SelectMenuOptionBuilder> BuildModmailSelectMenu()
+    {
+        var selectmenuopts = new List<SelectMenuOptionBuilder>();
+
+        foreach (var guild in _clientInstance.Guilds)
+        { 
+                
+            if (!_dbService.Config.ContainsKey(guild.Id))
+                continue;
+            var guildConfig = _dbService.Config[guild.Id];
+                
+            if (!guildConfig.ContainsKey("modmailchannel"))
+                continue;
+                
+            // Console.WriteLine(guild.Name);
+            IEmote emoji = guild.Emotes.FirstOrDefault<IEmote>(x => x.Name == "arc_icon", new Emoji("🌐"));
+            selectmenuopts.Add(new SelectMenuOptionBuilder()
+            {
+                Description = guild.Description?[..90] + "...",
+                Emote = emoji,
+                IsDefault = false,
+                Label = guild.Name,
+                Value = guild.Id.ToString()
+            });
+        }
+
+        return selectmenuopts;
     }
 
     private async Task CloseModMailSession(ModMail m, SocketUser user)
