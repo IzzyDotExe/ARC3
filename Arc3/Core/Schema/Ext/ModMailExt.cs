@@ -196,18 +196,18 @@ public static class ModMailExt
             new ComponentBuilder()
                 .WithRows(new List<ActionRowBuilder> {
                     new ActionRowBuilder()
-                        .WithButton("Save and Close", 
+                        .WithButton("Close", 
                                     $"modmail.save.{self.Id}",
                                     ButtonStyle.Secondary,
                                     new Emoji("📝"))
-                        .WithButton("Close",
-                                    $"modmail.close.{self.Id}",
-                                    ButtonStyle.Danger,
-                                    new Emoji("🔒"))
                         .WithButton("Ban",
                                     $"modmail.ban.{self.Id}",
                                     ButtonStyle.Danger,
                                     new Emoji("🔨"))
+                        .WithButton("Ping",
+                                $"modmail.ping.{self.Id}",
+                                    ButtonStyle.Success,
+                                    new Emoji("📣"))
                 })
                 .Build()
             :

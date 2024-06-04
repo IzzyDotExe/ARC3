@@ -239,6 +239,10 @@ public class ModMailService : ArcService
                 await ConfirmBanUser(modmail, ctx);
                 break;
             
+            case "modmail.ping":
+                await modmail.SendUserSystem(_clientInstance, "This is a reminder to check this ticket!");
+                await ctx.RespondAsync();
+                break;
             default:
                 break;
 
@@ -252,6 +256,7 @@ public class ModMailService : ArcService
             .WithTitle("Are you sure you want to ban this user?")
             .WithCustomId($"modmail.ban.confirm.{mail.Id}")
             .AddTextInput(new TextInputBuilder()
+                .WithLabel("Enter a reason for the ban")
                 .WithCustomId("modmail.ban.reason")
                 .WithPlaceholder("reason")
                 .WithRequired(true)
