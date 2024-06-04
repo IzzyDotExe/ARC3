@@ -22,6 +22,9 @@ public class UtilityModule : ArcModule {
   
   public DbService DbService { get; set; }
   public UptimeService UptimeService { get; set; }
+  
+  public ModMailService ModmailService { get; set; }
+  
 
   private static DateTimeOffset lastAlert = new DateTimeOffset(2024, 02, 1, 0, 0, 0, new());
 
@@ -61,6 +64,32 @@ public class UtilityModule : ArcModule {
     } else {
       await interaction.RespondAsync("Not Your command", ephemeral: true);
     }
+
+  }
+
+  [SlashCommand("modmail", "Select a guild to modmail"), EnabledInDm(true)]
+  public async Task ModmailCommand()
+  {
+    
+    // Exit if it is not a dm channel
+    if (Context.Channel.GetChannelType() != ChannelType.DM)
+    {
+      await Context.Interaction.RespondAsync("This command is only available in the bot DMS.", ephemeral: true);
+      return;
+    }
+    
+    var mails = await DbService.GetModMails();
+
+    if (mails.Any(x => (ulong)x.UserSnowflake == Context.User.Id))
+    {
+      await Context.Interaction.RespondAsync("You are already in a modmail.", ephemeral: true);
+      return;
+    }
+
+    
+    var selectMenu = ModmailService.BuildModmailSelectMenu();
+    var components = new ComponentBuilder().WithSelectMenu(new SelectMenuBuilder().WithOptions(selectMenu));
+    await Context.Interaction.RespondAsync(components: components.Build());
 
   }
   

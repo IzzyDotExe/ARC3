@@ -138,6 +138,7 @@ public class ModMailService : ArcService
                 x.Command is "all" or "modmail"))
         {
             await arg.RespondAsync("You are blacklisted from using modmail", ephemeral: true);
+            return;
         }
         
         ModMail? modmail = null;
@@ -148,7 +149,21 @@ public class ModMailService : ArcService
 
                 
             await modmail.InitAsync(_clientInstance, guild, arg.User, _dbService);
-            await modmail.SendUserSystem(_clientInstance, "Your modmail request was recieved! Please wait and a staff member will assist you shortly.");
+            MessageComponent? components = null;
+            if (_dbService.Config[guild.Id].ContainsKey("prioritymail"))
+            {
+                components = new ComponentBuilder().WithButton(
+                        "Priority Ping",
+                        $"modmail.priority.{modmail.Id}",
+                        ButtonStyle.Danger,
+                        new Emoji("🚨"))
+                    .Build();
+            }
+
+            var alert = components == null
+                ? ""
+                : "If your message is urgent please use the priority ping button below, misuse of this feature will result in blacklisting from modmail and possibly more action taken at the moderation team's discretion.";
+            await modmail.SendUserSystem(_clientInstance, $"Your modmail request was recieved! Please wait and a staff member will assist you shortly.\n\n{ alert }", components: components);
             await modmail.SendModMailMenu(_clientInstance);
             
             ActiveChannels.Add(modmail.ChannelSnowflake);
@@ -239,6 +254,27 @@ public class ModMailService : ArcService
                 await ConfirmBanUser(modmail, ctx);
                 break;
             
+            case "modmail.ping":
+                await modmail.SendUserSystem(_clientInstance, "This is a reminder to check this ticket!");
+                await ctx.RespondAsync();
+                break;
+            case "modmail.priority":
+                
+                var channel = await modmail.GetChannel(_clientInstance);
+                
+                var blacklist = await _dbService.GetItemsAsync<Blacklist>("blacklist");
+                if (blacklist.Any(x =>
+                        x.GuildSnowflake == (long)channel.GuildId && x.UserSnowflake == ((long)ctx.User.Id) &&
+                        x.Command is "all" or "prioritymail"))
+                {
+                    await ctx.RespondAsync("You are blacklisted from using priority mail", ephemeral: true);
+                    break;
+                }
+                
+                var role = channel.Guild.GetRole(ulong.Parse(_dbService.Config[channel.Guild.Id]["prioritymail"]));
+                await channel.SendMessageAsync($"Priority Mail Alert {role.Mention}", allowedMentions: AllowedMentions.All);
+                await ctx.RespondAsync();
+                break;
             default:
                 break;
 
@@ -252,6 +288,7 @@ public class ModMailService : ArcService
             .WithTitle("Are you sure you want to ban this user?")
             .WithCustomId($"modmail.ban.confirm.{mail.Id}")
             .AddTextInput(new TextInputBuilder()
+                .WithLabel("Enter a reason for the ban")
                 .WithCustomId("modmail.ban.reason")
                 .WithPlaceholder("reason")
                 .WithRequired(true)
@@ -286,16 +323,15 @@ public class ModMailService : ArcService
 
     private async Task ClientInstanceOnMessageReceived(SocketMessage arg)
     {
-
+        // Quit if the message is from a bot
+        if (arg.Author.IsBot)
+            return;
+        
         // Non private messages are handled as from a moderator
         if (arg.Channel.GetChannelType() != ChannelType.DM)
         {
 
             if (!ActiveChannels.Contains((long)arg.Channel.Id))
-                return;
-            
-            // Quit if the message is from a bot
-            if (arg.Author.IsBot)
                 return;
                 
             // Quit if the message is commented
@@ -327,30 +363,8 @@ public class ModMailService : ArcService
             // TODO: Insert server picking mechanism
             // For now choose the default guild
 
-            var selectmenuopts = new List<SelectMenuOptionBuilder>();
-            
-            foreach (var guild in _clientInstance.Guilds)
-            { 
-                
-                if (!_dbService.Config.ContainsKey(guild.Id))
-                    continue;
-                var guildConfig = _dbService.Config[guild.Id];
-                
-                if (!guildConfig.ContainsKey("modmailchannel"))
-                    continue;
-                
-                // Console.WriteLine(guild.Name);
-                IEmote emoji = guild.Emotes.FirstOrDefault<IEmote>(x => x.Name == "arc_icon", new Emoji("🌐"));
-                selectmenuopts.Add(new SelectMenuOptionBuilder()
-                {
-                    Description = guild.Description?[..90] + "...",
-                    Emote = emoji,
-                    IsDefault = false,
-                    Label = guild.Name,
-                    Value = guild.Id.ToString()
-                });
-            }
-            
+            var selectmenuopts = BuildModmailSelectMenu();
+
             var content = new ComponentBuilder()
                 .WithSelectMenu("modmail.select.server", selectmenuopts);
             
@@ -391,6 +405,35 @@ public class ModMailService : ArcService
         }
         
         
+    }
+
+    public List<SelectMenuOptionBuilder> BuildModmailSelectMenu()
+    {
+        var selectmenuopts = new List<SelectMenuOptionBuilder>();
+
+        foreach (var guild in _clientInstance.Guilds)
+        { 
+                
+            if (!_dbService.Config.ContainsKey(guild.Id))
+                continue;
+            var guildConfig = _dbService.Config[guild.Id];
+                
+            if (!guildConfig.ContainsKey("modmailchannel"))
+                continue;
+                
+            // Console.WriteLine(guild.Name);
+            IEmote emoji = guild.Emotes.FirstOrDefault<IEmote>(x => x.Name == "arc_icon", new Emoji("🌐"));
+            selectmenuopts.Add(new SelectMenuOptionBuilder()
+            {
+                Description = guild.Description?[..90] + "...",
+                Emote = emoji,
+                IsDefault = false,
+                Label = guild.Name,
+                Value = guild.Id.ToString()
+            });
+        }
+
+        return selectmenuopts;
     }
 
     private async Task CloseModMailSession(ModMail m, SocketUser user)

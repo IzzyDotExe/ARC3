@@ -118,8 +118,9 @@ public static class ModMailExt
         
     }
 
-    public static async Task SendUserSystem(this ModMail self, DiscordSocketClient clientInstance, string content)
+    public static async Task SendUserSystem(this ModMail self, DiscordSocketClient clientInstance, string content, MessageComponent? components = null)
     {
+        
         var author = clientInstance.CurrentUser;
 
         var embed = new EmbedBuilder()
@@ -129,7 +130,12 @@ public static class ModMailExt
             .Build();
 
         var user = await self.GetUser(clientInstance);
-        await user.SendMessageAsync(embed: embed);
+
+        if (components is null)
+            await user.SendMessageAsync(embed: embed);
+        else
+            await user.SendMessageAsync(embed: embed, components: components);
+        
     }
 
     public static async Task SendMods(this ModMail self, SocketMessage msg, DiscordSocketClient clientInstance, DbService dbService, bool edit = false)
@@ -196,18 +202,18 @@ public static class ModMailExt
             new ComponentBuilder()
                 .WithRows(new List<ActionRowBuilder> {
                     new ActionRowBuilder()
-                        .WithButton("Save and Close", 
+                        .WithButton("Close", 
                                     $"modmail.save.{self.Id}",
                                     ButtonStyle.Secondary,
                                     new Emoji("📝"))
-                        .WithButton("Close",
-                                    $"modmail.close.{self.Id}",
-                                    ButtonStyle.Danger,
-                                    new Emoji("🔒"))
                         .WithButton("Ban",
                                     $"modmail.ban.{self.Id}",
                                     ButtonStyle.Danger,
                                     new Emoji("🔨"))
+                        .WithButton("Ping",
+                                $"modmail.ping.{self.Id}",
+                                    ButtonStyle.Success,
+                                    new Emoji("📣"))
                 })
                 .Build()
             :
