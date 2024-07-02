@@ -299,6 +299,47 @@ public class UtilityModule : ArcModule {
     
   }
 
+  [SlashCommand("blacklistId", "Add a user to the command blacklist by id"),
+  RequireUserPermission(GuildPermission.Administrator), RequirePremium]
+  public async Task BlacklistIDCommand(
+    long id,
+    string? cmd = "all"
+  ) {
+    var ctx = Context.Interaction;
+    var blacklists = await DbService.GetItemsAsync<Blacklist>("blacklist");
+    var user = _clientInstance.GetUser((ulong)id);
+
+    // Guard if the user is already blacklisted.
+    if (blacklists.Any(x => x.GuildSnowflake == ((long)Context.Guild.Id) &&  x.UserSnowflake == (long)user.Id && (x.Command == "all" || x.Command == cmd)) ) {
+      await ctx.RespondAsync($"That user is already blacklisted from {cmd}", ephemeral: true);
+      return;
+    }
+
+    // Guard if the user has a higher role
+    if (Context.CheckRoleHigher(user)) {
+      await ctx.RespondAsync($"You do not have permission to blacklist that user!", ephemeral: true);
+      return;
+    }
+
+    // Guard if the user is the invoker
+    if (Context.User.Id == user.Id) {
+      await ctx.RespondAsync("You cannot blacklist yourself, silly.", ephemeral: true);
+      return;
+    }
+
+    var blacklist = new Blacklist() {
+      UserSnowflake = ((long)user.Id),
+      GuildSnowflake = ((long)Context.Guild.Id),
+      Command = cmd
+    };
+
+    // Add the blacklist
+    await DbService.AddAync<Blacklist>(blacklist, "blacklist");
+
+    await ctx.RespondAsync($"{user.Mention} was blacklisted from {cmd}", ephemeral: true);
+
+  }
+
   [SlashCommand("blacklist", "Add a user to the command blacklist"),
   RequireUserPermission(GuildPermission.Administrator), RequirePremium]
   public async Task BlacklistCommand(
