@@ -299,15 +299,15 @@ public class UtilityModule : ArcModule {
     
   }
 
-  [SlashCommand("blacklistId", "Add a user to the command blacklist by id"),
+  [SlashCommand("blacklistid", "Add a user to the command blacklist by id"),
   RequireUserPermission(GuildPermission.Administrator), RequirePremium]
   public async Task BlacklistIDCommand(
-    long id,
+    string id,
     string? cmd = "all"
   ) {
     var ctx = Context.Interaction;
     var blacklists = await DbService.GetItemsAsync<Blacklist>("blacklist");
-    var user = _clientInstance.GetUser((ulong)id);
+    var user = _clientInstance.GetUser(ulong.Parse(id));
 
     // Guard if the user is already blacklisted.
     if (blacklists.Any(x => x.GuildSnowflake == ((long)Context.Guild.Id) &&  x.UserSnowflake == (long)user.Id && (x.Command == "all" || x.Command == cmd)) ) {
