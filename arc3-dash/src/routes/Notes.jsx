@@ -14,7 +14,7 @@ export default function Notes() {
   const [notesUsers, setNoteUsers] = useState([]);
 
   useEffect(() => {
-    axios.get(`/api/notes/${guild}`).then(res => {
+    axios.get(`/api/notes/${guild}/users`).then(res => {
       setNoteUsers(res.data);
     })
   }, [guild])

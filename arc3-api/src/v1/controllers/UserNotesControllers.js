@@ -43,7 +43,7 @@ async function GetUserNotesBy(req, res) {
   try { 
 
     const notes = await UserNote.find();
-    res.status(200).json(notes.filter(x => x.guildsnowflake == guildid ))
+    res.status(200).json(notes.filter(x => x.guildsnowflake == guildid && x.authorsnowflake == userid))
 
 
   } catch (e) {
@@ -85,4 +85,29 @@ async function GetUsers(req, res) {
   }
 }
 
-module.exports = {GetUsers, GetUserNotes, GetUserNotesBy}
+async function GetUserNotesGuild(req, res) {
+  const guildid = req.params.guildid;
+
+  if (guildid === undefined) {
+    res.status(400);
+    res.json({'status': 404, 'error': 'could not find those usernotes'});
+    return;
+  }
+
+  try {
+
+    const notes = await UserNote.find();
+    res.status(200).json(notes.filter(x => x.guildsnowflake == guildid));
+
+  } catch (e) {
+    console.error(e.message)
+
+    res.status(500);
+    res.json({
+      'status': 500,
+      'error': 'An Error occured. Please try again later.'
+    });
+  }
+}
+
+module.exports = {GetUsers, GetUserNotes, GetUserNotesBy, GetUserNotesGuild}

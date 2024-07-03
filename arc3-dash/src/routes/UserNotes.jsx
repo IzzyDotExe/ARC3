@@ -12,7 +12,7 @@ export default function UserNotes() {
   const [usernotes, setUserNotes] = useState([])
 
   useEffect(() => {
-    axios.get(`/api/notes/${guild}/${userid}`).then(res => {
+    axios.get(`/api/notes/${guild}/users/${userid}`).then(res => {
       setUserNotes(res.data);
     })
   }, [guild, userid])
