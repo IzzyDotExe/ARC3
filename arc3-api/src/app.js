@@ -35,13 +35,13 @@ app.get('/login', (req, res) => {
 })
 
 // Protect the transcripts route.
-app.get('/:guildid/transcripts/', authenticated, whitelist, (req, res) => {
+app.get('/:guildid/transcripts/', authenticated, (req, res) => {
   res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
 })
 
 
 // Protect the transcripts route.
-app.get('/:guildid/transcripts/*', authenticated, whitelist, (req, res) => {
+app.get('/:guildid/transcripts/*', authenticated, (req, res) => {
   res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
 })
 
@@ -56,7 +56,7 @@ app.get('/:guildid/notes/*', authenticated, whitelist, (req, res) => {
 })
 
 // Authenticate the rest of the client.
-app.get('/*', authenticated,  (req, res) => {
+app.get('/*',  (req, res, next) => {
 
   const file = req.path.split('/')[1];
   if (STATIC_FILES.includes(file)) {
@@ -64,7 +64,9 @@ app.get('/*', authenticated,  (req, res) => {
     return;
   }
 
-  res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
+  authenticated(req, res, () => {
+    res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
+  });
 
 });
 

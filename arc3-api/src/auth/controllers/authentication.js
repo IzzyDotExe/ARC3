@@ -3,13 +3,19 @@ const { Sign, Verify } = require('../../lib/jwt.js');
 
 // Send the login page
 function LoginRoute(req, res) {
-  res.redirect("/login");
+  const {src} = req.query
+  if (src) {
+    res.cookie('src', src)
+  }
+  
+  res.redirect(`/login`);
+
 }
 
 function RedirectRoute(req, res) {
 
-  // Get the direct url and send them to it
-  const url = process.env.DIRECT_URL;
+  let url = process.env.DIRECT_URL;
+  
   res.redirect(url);
 
 }
@@ -23,6 +29,10 @@ async function CallbackRoute(req, res) {
     return;
   }
 
+  // If there is an src available from this identified user, get it.
+
+  const { src } = req.cookies;
+ 
   // Extract the code from the query parameters
   const { code } = req.query;
 
@@ -55,7 +65,10 @@ async function CallbackRoute(req, res) {
 
   res.cookie('session', jwt, { maxAge: response.data.expires_in })
 
-  res.redirect('/')
+  if (src)
+    res.redirect(src)
+  else
+    res.redirect('/')
 
 }
 

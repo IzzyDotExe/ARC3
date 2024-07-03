@@ -18,7 +18,7 @@ async function authenticated(req, res, next) {
 
   // If we got no cookies, we can redirect to the login page.
   if (!token) {
-    res.redirect('/auth/login');
+    res.redirect(`/auth/login?src=${req.originalUrl}`);
     return;
   }
 
