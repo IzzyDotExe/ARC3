@@ -3,7 +3,6 @@ import { useState, useEffect} from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router';
 
-import "./Home.css"
 import Guild from '../components/Guild.jsx';
 
 export default function Home() {

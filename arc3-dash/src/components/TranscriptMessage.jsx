@@ -30,7 +30,7 @@ export function TranscriptMessage({data, key}) {
             </div>
             <div className="chatlog__message-primary">
               <div className="chatlog__header">
-                <span className="chatlog__author" style={{color: "rgb(155,89,182)", opacity: data.comment? "40%": "100%"}} title={UserName} data-user-id={data.sendersnowflake}>{UserName}</span> 
+                <span className="chatlog__author" style={{opacity: data.comment? "40%": "100%"}} title={UserName} data-user-id={data.sendersnowflake}>{UserName}</span> 
                 <span className="chatlog__timestamp"><a style={{opacity: data.comment? "50%": "100%"}} href={`#${key}`}>{formattedDate} {`${data.comment? "Comment": ""}`}</a></span>
               </div>
               <div class='chatlog__content chatlog__markdown'>

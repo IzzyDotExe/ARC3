@@ -5,8 +5,6 @@ import axios from 'axios'
 
 import Appeal from '../components/Appeal'
 
-import './Appeals.css'
-
 export default function Appeals({ self }) {
 
   const [appeals, setAppeals] = useState([]);

@@ -1,5 +1,4 @@
 import Navbar from '../components/Navbar'
-import './Appeal.css'
 import { useState, useEffect, useCallback } from 'react' 
 import axios from 'axios'
 import unescape from 'unescape'

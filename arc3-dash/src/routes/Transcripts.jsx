@@ -3,8 +3,6 @@ import { useState, useEffect} from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { Outlet } from "react-router-dom";
-import './Transcripts.css';
-import './Transcript.css';
 
 import { TranscriptSidebar } from '../components/TranscriptSidebar.jsx';
 import { toggleSidebar } from '../lib/domactions.js';

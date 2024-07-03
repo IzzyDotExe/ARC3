@@ -1,4 +1,4 @@
-import './Guild.css'
+
 
 export default function Guild({guild, key}) {
 
