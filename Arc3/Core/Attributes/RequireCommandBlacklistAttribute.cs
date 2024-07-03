@@ -25,7 +25,7 @@ public class RequireCommandBlacklistAttribute : PreconditionAttribute
 
         var cmd = commandInfo.Name.ToLower();
 
-        if (blacklists.Any(x => x.GuildSnowflake == ((long)context.Guild.Id) && x.UserSnowflake == ((long)context.User.Id) && (x.Command == "all" || x.Command == cmd))) {
+        if (blacklists.Any(x => (x.GuildSnowflake == ((long)context.Guild.Id) || x.GuildSnowflake == 0) && x.UserSnowflake == ((long)context.User.Id) && (x.Command == "all" || x.Command == cmd))) {
             await context.Interaction.RespondAsync("You are blacklisted from using this command.");
             return PreconditionResult.FromError(new Exception("Blacklisted"));
         }
