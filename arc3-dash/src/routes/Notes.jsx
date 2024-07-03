@@ -31,7 +31,7 @@ export default function Notes() {
         <div className="NotesPick">
           <div className = "sidebar">
             {notesUsers.map(x => {
-              return <a href={`/${guild}/notes/${x}`}><TranscriptMemberComponent/>} userid={x}/></a>
+              return <a href={`/${guild}/notes/${x}`}><TranscriptMemberComponent userid={x}/></a>
             })
             }
           </div>
