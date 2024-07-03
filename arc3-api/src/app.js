@@ -35,13 +35,13 @@ app.get('/login', (req, res) => {
 })
 
 // Protect the transcripts route.
-app.get('/:guildid/transcripts/', authenticated, (req, res) => {
+app.get('/:guildid/transcripts/', authenticated, whitelist, (req, res) => {
   res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
 })
 
 
 // Protect the transcripts route.
-app.get('/:guildid/transcripts/*', authenticated, (req, res) => {
+app.get('/:guildid/transcripts/*', authenticated, whitelist, (req, res) => {
   res.sendFile('index.html', { root: process.env.BUILD_PATH?? "./build" });
 })
 
