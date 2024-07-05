@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider} from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 
+import "./index.css"
+
 import axios from 'axios';
 
 import Home from './routes/Home';
@@ -12,6 +14,8 @@ import Appeal from './routes/Appeal'
 import Appeals from './routes/Appeals'
 import UserNotes from './routes/UserNotes.jsx';
 import Notes from './routes/Notes'
+import Guildbar from './components/Guildbar.jsx'
+import Navbar from './components/Navbar.jsx'
 
 function App() {
 
@@ -65,7 +69,13 @@ function App() {
   
   return (
     <React.StrictMode>
-      <RouterProvider router={router}/>
+      <div className="app">
+        <Guildbar />
+        <div className="view">
+          <Navbar tag="ARC V3" self={self}/>
+          <RouterProvider router={router}/>
+        </div>
+      </div>
     </React.StrictMode>
   );
 }
