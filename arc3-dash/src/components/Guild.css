@@ -1,0 +1,44 @@
+.guild {
+  display: flex;
+  padding: 5px;
+  margin: 5px;
+  align-items: center;
+  width: fit-content;
+}
+
+.guild > a {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+}
+
+.guild img {
+  width: 55px;
+  transition: 0.5s transform cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  border: white;
+}
+
+.guild a {
+  text-decoration: none;
+}
+
+.guild p {
+  transition: 0.3s opacity ease-in;
+  text-decoration: none;
+  color: white;
+  opacity: 0;
+  background-color: rgb(53, 53, 53);
+  padding: 5px 7px;
+  border-radius: 5px;
+  position: absolute;
+  left: 90px;
+}
+
+.guild:has(img:hover) p {
+  opacity: 1.0;
+}
+
+.guild:has(img:hover) img {
+  transform: scale(1.1);
+}
