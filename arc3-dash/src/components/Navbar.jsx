@@ -1,22 +1,15 @@
+import { useEffect, useState } from 'react'
+import MemberLabel from './MemberLabel.jsx'
+import './Navbar.css'
 
+export default function Navbar({tag, guild, self}) {
 
-export default function Navbar({guild}) {
   return (
-    <nav>
-      <h2>Arc V3</h2>
-      <ul>
-
-        <li><a href="/">Home</a></li>
-        {/* <li><a href='/appeal'>Appeal</a></li>
-        <li><a href='/appeals'>Appeals</a></li> */}
-        {
-          guild && <li><a href={`/${guild}/transcripts/`}>Transcripts</a></li>
-        }
-        {
-          guild &&
-          <li><a href={`/${guild}/notes`}>User Notes</a></li>
-        }
-      </ul>
+    <nav className="nav-bar">
+      <div className="labels">
+        <h2>{tag}</h2>
+      </div>
+      <MemberLabel placement="left" user={self} />
     </nav>
   )
 }
