@@ -9,7 +9,7 @@ function Comment({data}) {
   const contents = data.commentContents;
 
   const UserName = user ? user.username : "User";
-  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "/blank-avatar.jpg"; 
+  const Avatar = user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024` : "/missing.png"; 
   const date = new Date(data.commentDate);
   const formattedDate = date.toLocaleString('en-US', { timeZoneName: 'short' });
 
