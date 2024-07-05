@@ -5,6 +5,7 @@ services:
   mongo:
     image: mongo:7.0
     container_name: mongo
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     restart: always
     networks:
       - common-net
@@ -13,6 +14,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongo_data:/data/db
+      - mongo_config:/data/configdb
     ports:
       - 27017:27017
     healthcheck:
@@ -102,3 +104,4 @@ networks:
 
 volumes:
   mongo_data:
+  mongo_config:
