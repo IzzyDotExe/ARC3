@@ -1,0 +1,8 @@
+.member-icon {
+  border-radius: 50%;
+}
+
+.member-label {
+  align-items: center;
+  display: flex;
+}
