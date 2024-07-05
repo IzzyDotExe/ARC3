@@ -1,4 +1,5 @@
 import "./Guild.css"
+import IconLabel from './IconLabel.jsx'
 
 export default function Guild({guild, key, href}) {
 
@@ -15,11 +16,4 @@ export default function Guild({guild, key, href}) {
       </>}
     </div>
   )
-}
-
-export function IconLabel({tag, src}) {
-  return (<>
-    <img draggable="false" src={src} alt="" />
-    <p>{tag}</p>
-  </>)
 }
