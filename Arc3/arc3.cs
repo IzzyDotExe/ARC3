@@ -182,7 +182,7 @@ internal class Arc3
       return;
 
     // Send the guild info
-    await db.AddAync<GuildInfo>(new GuildInfo()
+    await db.AddAsync<GuildInfo>(new GuildInfo()
     {
       GuildSnowflake = guild.Id.ToString(),
       Premium = false,

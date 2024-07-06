@@ -19,7 +19,7 @@ namespace Arc3.Core.Modules;
 
 
 [RequireCommandBlacklist]
-public class UtilityModule : ArcModule {
+public class UtilityModule : ArcModule {      
   
   public DbService DbService { get; set; }
   public UptimeService UptimeService { get; set; }
@@ -180,12 +180,38 @@ public class UtilityModule : ArcModule {
     string configKey,
     string configValue
   ) {
+
     var configs = await DbService.GetGuildConfigsAsync();
     var config = configs.Where(c => c.GuildSnowflake == (long)Context.Guild.Id && c.ConfigKey.Equals(configKey));
+   
     GuildConfig conf;
+   
+    
     if (config.Any()) {
+
       conf = config.First();
+      BsonDocument data = new BsonDocument();
+
+      data.Add(new BsonElement[] {
+        new BsonElement("key", conf.ConfigKey),
+        new BsonElement("oldvalue", conf.ConfigValue),
+        new BsonElement("newvalue", configValue)
+      });
+
+      var insight = new Insight {
+        Id = Guid.NewGuid().ToString(),
+        Type = "config",
+        Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+        Tagline = "Config value was changed",
+        GuildID = Context.Guild.Id.ToString(),
+        Data = data,
+        Url = ""
+      }; 
+
+      await DbService.AddAsync<Insight>(insight, "Insights");
+
       conf.ConfigValue = configValue;
+
     } else {
 
       conf = new GuildConfig() {
@@ -329,7 +355,7 @@ public class UtilityModule : ArcModule {
     };
 
     // Add the blacklist
-    await DbService.AddAync<Blacklist>(blacklist, "blacklist");
+    await DbService.AddAsync<Blacklist>(blacklist, "blacklist");
 
     await ctx.RespondAsync($"{user.Mention} was blacklisted from {cmd}", ephemeral: true);
 
@@ -370,7 +396,7 @@ public class UtilityModule : ArcModule {
     };
 
     // Add the blacklist
-    await DbService.AddAync<Blacklist>(blacklist, "blacklist");
+    await DbService.AddAsync<Blacklist>(blacklist, "blacklist");
 
     await ctx.RespondAsync($"{user.Mention} was blacklisted from {cmd}", ephemeral: true);
 
@@ -406,7 +432,7 @@ public class UtilityModule : ArcModule {
     };
 
     // Add the blacklist
-    await DbService.AddAync<Blacklist>(blacklist, "blacklist");
+    await DbService.AddAsync<Blacklist>(blacklist, "blacklist");
 
     await ctx.RespondAsync($"{user.Mention} was blacklisted from {cmd}", ephemeral: true);
 
