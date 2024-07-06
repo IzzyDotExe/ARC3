@@ -3,6 +3,7 @@ const Transcripts = require('./routers/TranscriptRoutes.js');
 const Discord = require('./routers/DiscordRoutes.js');
 const Appeals = require('./routers/AppealsRoutes.js');
 const Notes = require('./routers/UsernoteRoutes.js');
+const Insights = require('./routers/InsightRoutes.js');
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router.use('/transcripts', Transcripts);
 router.use('/discord', Discord);
 router.use('/appeals', Appeals);
 router.use('/notes', Notes);
+router.use('/insights', Insights);
 
 
 router.use((req, res) => {
