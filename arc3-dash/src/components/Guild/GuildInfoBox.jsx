@@ -1,4 +1,4 @@
-import InfoBox from '../Infobox.jsx'
+import InfoBox from '../Util/Infobox.jsx'
 import './GuildInfoBox.css'
 
 export default function GuildInfoBox({guild}) {

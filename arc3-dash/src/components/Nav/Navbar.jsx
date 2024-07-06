@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import MemberLabel from './MemberLabel.jsx'
+import MemberLabel from '../Util/MemberLabel.jsx'
 import './Navbar.css'
 
 export default function Navbar({tag, guild, self}) {

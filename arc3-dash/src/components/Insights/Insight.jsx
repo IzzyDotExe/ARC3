@@ -1,4 +1,4 @@
-import InfoBox from '../Infobox';
+import InfoBox from '../Util/Infobox';
 
 export default function Insight({ children, insight }) {
   return (  

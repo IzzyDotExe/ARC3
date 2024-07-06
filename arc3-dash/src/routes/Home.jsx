@@ -6,8 +6,8 @@ import axios from 'axios'
 
 import { useState, useEffect } from 'react'
 
-import Infobox from '../components/Infobox.jsx'
-import GuildInfoBox from '../components/Guilds/GuildInfoBox.jsx'
+import Infobox from '../components/Util/Infobox.jsx'
+import GuildInfoBox from '../components/Guild/GuildInfoBox.jsx'
 import InsightsInfoBox from '../components/Insights/InsightsInfoBox.jsx'
 
 export default function Home() {

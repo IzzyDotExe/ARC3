@@ -1,4 +1,4 @@
-import InfoBox from '../Infobox.jsx'
+import InfoBox from '../Util/Infobox.jsx'
 import './InsightsInfoBox.css'
 import Insight from './Insight.jsx'
 
