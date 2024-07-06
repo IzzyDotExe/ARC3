@@ -1,4 +1,4 @@
-import Navbar from '../components/Navbar'
+import Navbar from '../components/Nav//Navbar'
 
 export default function Appeal() {
     return (

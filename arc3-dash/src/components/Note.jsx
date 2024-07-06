@@ -1,5 +1,5 @@
 import {timeAgo} from '../lib/utils.js';
-import {TranscriptMemberComponent} from './TranscriptMemberComponent.jsx';
+import {TranscriptMemberComponent} from './Transcripts/TranscriptMemberComponent.jsx';
 
 export function Note({ data, key }) {
 

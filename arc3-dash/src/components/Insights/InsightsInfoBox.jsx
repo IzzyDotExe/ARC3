@@ -1,8 +1,11 @@
 import InfoBox from '../Util/Infobox.jsx'
 import './InsightsInfoBox.css'
 import Insight from './Insight.jsx'
+import NoInsights from './NoInsights'
 
 import axios from 'axios'
+
+import { getInsightContent } from './InsightContentTypes.js'
 
 import { useState, useEffect, useCallback } from 'react'
 
@@ -13,18 +16,25 @@ export default function GuildInfoBox({guild}) {
   const insightsBox = useCallback(() => {
 
     if (insights.length === 0)
-      return <p>No Insights found</p>
+      return <NoInsights/>
 
     const insightElements = []
     
-    insights.forEach(insight => {
+    insights.sort((a, b) => {
+      return parseInt(b.date) - parseInt(a.date)
+    }).forEach(insight => {
+      
+      let insightcontent = getInsightContent(insight)
+      
       insightElements.push(
-        <Insight insight={insight} />
+        <Insight insight={insight}>
+          {insightcontent}
+        </Insight>
       )
     })
     
     return insightElements
-  });
+  }, [insights]);
 
   useEffect(() => {
 

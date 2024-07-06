@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import { toggleSidebar, setSideBar } from '../lib/domactions.js';
-import { TranscriptMessage } from '../components/TranscriptMessage';
+import { TranscriptMessage } from '../components/Transcripts/TranscriptMessage';
 
 
 export default function Transcript() {

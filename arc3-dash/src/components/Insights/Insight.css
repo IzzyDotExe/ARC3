@@ -1,0 +1,19 @@
+.insight h3 {
+  text-align: center;
+  margin: 5px 0;
+}
+
+.insight p {
+  margin: 5px 0;
+}
+
+.insight > .inner-infobox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.insight > .inner-infobox > .content {
+  margin: 0 20px;
+}

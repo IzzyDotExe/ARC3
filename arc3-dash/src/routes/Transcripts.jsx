@@ -1,10 +1,10 @@
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Nav/Navbar';
 import { useState, useEffect} from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { Outlet } from "react-router-dom";
 
-import { TranscriptSidebar } from '../components/TranscriptSidebar.jsx';
+import { TranscriptSidebar } from '../components/Transcripts/TranscriptSidebar.jsx';
 import { toggleSidebar } from '../lib/domactions.js';
 
 export default function Transcripts() {

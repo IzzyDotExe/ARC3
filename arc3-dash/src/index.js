@@ -14,8 +14,8 @@ import Appeal from './routes/Appeal'
 import Appeals from './routes/Appeals'
 import UserNotes from './routes/UserNotes.jsx';
 import Notes from './routes/Notes'
-import Guildbar from './components/Guildbar.jsx'
-import Navbar from './components/Navbar.jsx'
+import Guildbar from './components/Guild/Guildbar.jsx'
+import Navbar from './components/Nav/Navbar.jsx'
 
 function App() {
 

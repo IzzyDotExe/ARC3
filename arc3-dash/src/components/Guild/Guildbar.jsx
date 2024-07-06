@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useState, useEffect } from 'react';
 import Guild from './Guild.jsx'
 import {CLIENT_ID} from '../../config.js'
-import IconLabel from '../IconLabel.jsx'
+import IconLabel from '../Util/IconLabel.jsx'
 
 export default function Guildbar() {
 

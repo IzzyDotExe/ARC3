@@ -1,10 +1,10 @@
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Nav/Navbar';
 import { useState, useEffect} from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { Outlet } from "react-router-dom";
 
-import {TranscriptMemberComponent} from '../components/TranscriptMemberComponent'
+import {TranscriptMemberComponent} from '../components/Transcripts/TranscriptMemberComponent'
 
 export default function Notes() {
 

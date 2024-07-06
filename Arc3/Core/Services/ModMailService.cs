@@ -455,6 +455,7 @@ public class ModMailService : ArcService
 
             var newInsight = new Insight
             {
+                Id = Guid.NewGuid().ToString(),
                 Data = data,
                 Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 GuildID = guild.Id.ToString(),

@@ -1,3 +1,9 @@
 .insights-infobox {
   color: white;
+  max-height: 500px;
+  overflow-x: scroll;
+}
+
+.insights-infobox::-webkit-scrollbar {
+  display: none;
 }
