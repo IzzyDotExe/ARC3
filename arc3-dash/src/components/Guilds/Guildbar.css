@@ -1,0 +1,9 @@
+.guild-bar {
+
+
+  background-color: rgb(41, 41, 41);
+}
+
+.guild-bar::-webkit-scrollbar {
+  display: none;
+}

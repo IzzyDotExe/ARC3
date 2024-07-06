@@ -1,6 +1,6 @@
 .nav-bar {
   display: flex;
-  background-color: rgb(41, 41, 41);
+  background-color: rgb(50, 50, 50);
   width: 100%;
   color: white;
   justify-content: space-between;
@@ -15,5 +15,5 @@
 
 .member-icon {
   border: white solid 2px;
-  width: 50px;
+  width: 45px;
 }

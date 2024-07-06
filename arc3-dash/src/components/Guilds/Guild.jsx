@@ -1,5 +1,5 @@
 import "./Guild.css"
-import IconLabel from './IconLabel.jsx'
+import IconLabel from '../IconLabel.jsx'
 
 export default function Guild({guild, key, href}) {
 

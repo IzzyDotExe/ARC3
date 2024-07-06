@@ -12,6 +12,11 @@ code {
     monospace;
 }
 
+html, body {
+  height: 100vh;
+  width: 100vw;
+}
+
 
 .app {
   display: flex;
