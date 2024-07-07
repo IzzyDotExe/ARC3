@@ -4,6 +4,7 @@ const Discord = require('./routers/DiscordRoutes.js');
 const Appeals = require('./routers/AppealsRoutes.js');
 const Notes = require('./routers/UsernoteRoutes.js');
 const Insights = require('./routers/InsightRoutes.js');
+const Stats = require('./routers/StatRoutes.js');
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.use('/discord', Discord);
 router.use('/appeals', Appeals);
 router.use('/notes', Notes);
 router.use('/insights', Insights);
+router.use('/stats', Stats);
 
 
 router.use((req, res) => {
