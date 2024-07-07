@@ -5,7 +5,6 @@ services:
   mongo:
     image: mongo:7.0
     container_name: mongo
-    command: ["--keyFile", "/data/mongo.keyfile"]
     restart: always
     networks:
       - common-net
