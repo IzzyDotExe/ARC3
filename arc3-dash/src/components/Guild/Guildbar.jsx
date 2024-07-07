@@ -27,7 +27,7 @@ export default function Guildbar() {
     </div>
 
     {guilds.map(x => {
-      return <Guild href={x.id} guild={x} />
+      return <Guild href={`/${x.id}`} guild={x} />
     })}
 
   </nav>
