@@ -33,4 +33,4 @@ async function GetCommands(req, res) {
 
 }
 
-module.exports = { GetInsights: GetInsights }
+module.exports = { GetCommands: GetCommands }
