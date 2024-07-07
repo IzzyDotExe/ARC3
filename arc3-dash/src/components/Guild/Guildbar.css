@@ -1,5 +1,6 @@
 .guild-bar {
   background-color: rgb(41, 41, 41);
+  overflow: scroll;
 }
 
 .guild-bar::-webkit-scrollbar {
