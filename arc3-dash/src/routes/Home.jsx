@@ -14,6 +14,7 @@ export default function Home() {
 
   const {guildid} = useParams()
   const [guild, setGuild ] = useState({})
+  const [stats, setStats] = useState([])
 
   useEffect(() => {
 
@@ -21,14 +22,26 @@ export default function Home() {
       setGuild(res.data);
     })
 
-  }, [guildid, setGuild])
+    axios.get(`/api/stats?guildid=${guildid}`).then(res => {
+      setStats((res.data))
+    })
+
+  }, [guildid, setGuild, setStats])
 
   return (
     <div className="home">
       <section className="left">
-        <GuildInfoBox guild={guild}/>
+        <GuildInfoBox stats={stats} guild={guild}/>
         <Infobox>
-          a
+            {
+                stats.map(x => {
+                    let argsl = "";
+                    for (let arg in x.args) {
+                        argsl += `${arg}: ${x.args[arg]} `
+                    }
+                    return <p>/{x.command_name} {argsl}</p>
+                })
+            }
         </Infobox>
       </section>
       <section className="right">
