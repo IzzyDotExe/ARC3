@@ -98,12 +98,12 @@ internal class Arc3
 
   private async Task InsightStatTrack(SocketInteraction arg)
   {
-
-    var cmd = (SocketSlashCommand)arg;
+    
     var dbservice = _serviceProvider.GetRequiredService<DbService>();
     
     if (arg.Type == InteractionType.ApplicationCommand)
     {
+      var cmd = (SocketSlashCommand)arg;  
       var interaction = cmd.Data;
       
       var data = new BsonDocument();

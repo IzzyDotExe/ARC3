@@ -91,6 +91,8 @@ async function GetUser(req, res) {
 async function GetGuild(req, res) {
 
   const id = req.params.id;
+  const guildschemas = await Guild.find();
+  const guildData = guildschemas.filter(x => x.guildsnowflake === id)[0]
 
   // Guard if the userid is undefined
   if (id === undefined)
@@ -100,7 +102,9 @@ async function GetGuild(req, res) {
     
     if (discordCache[id]) {
       discordCache[id]['cached'] = true;
-      res.status(200).json(discordCache[id]);
+      let resp = discordCache[id];
+      resp.data = guildData;
+      res.status(200).json(resp);
       return;
     }
 
@@ -110,7 +114,9 @@ async function GetGuild(req, res) {
         discordCache[id] = json.data;
 
       discordCache[id]['cached'] = false;
-      res.status(200).json(discordCache[id]);
+      let resp = discordCache[id];
+      resp.data = guildData;
+      res.status(200).json(resp);
 
     }).catch(err => {
       res.status(500).json({
@@ -135,8 +141,8 @@ async function GetGuilds(req, res) {
 
   var self = await req.state.self()
   var cacheKey = self.id + "guilds"
-  var guilds = await Guild.find();
-  guilds = guilds.map(x => x.guildsnowflake)
+  var guildschemas = await Guild.find();
+  var guilds = guildschemas.map(x => x.guildsnowflake)
 
   try {
     

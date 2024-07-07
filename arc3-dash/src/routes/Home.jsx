@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import GuildInfoBox from '../components/Guild/GuildInfoBox.jsx'
 import InsightsInfoBox from '../components/Insights/InsightsInfoBox.jsx'
 import CommandStatInfoBox from "../components/Stats/CommandStatInfoBox";
+import Infobox from "../components/Util/Infobox";
 
 export default function Home() {
 
@@ -18,25 +19,31 @@ export default function Home() {
 
   useEffect(() => {
 
-    axios.get(`/api/discord/guilds/${guildid}/`).then(res => {
-      setGuild(res.data);
-    })
+    if (guildid) {
+      axios.get(`/api/discord/guilds/${guildid}/`).then(res => {
+        setGuild(res.data);
+      })
 
-    axios.get(`/api/stats?guildid=${guildid}`).then(res => {
-      setStats((res.data))
-    })
+      axios.get(`/api/stats?guildid=${guildid}`).then(res => {
+        setStats((res.data))
+      })
+    }
+
 
   }, [guildid, setGuild, setStats])
 
   return (
     <div className="home">
-      <section className="left">
-        <GuildInfoBox stats={stats} guild={guild}/>
-        <CommandStatInfoBox stats={stats}/>
-      </section>
-      <section className="right">
-        <InsightsInfoBox guild={guild}/>
-      </section>
+      { guildid && <>
+        <section className="left">
+          <GuildInfoBox stats={stats} guild={guild}/>
+          <CommandStatInfoBox stats={stats}/>
+        </section>
+        <section className="right">
+          <InsightsInfoBox guild={guild}/>
+        </section>
+      </>
+      }
     </div>
   );
 };

@@ -22,13 +22,12 @@ export default function Transcripts() {
 
   return (
     <>
-      <div className="App">
+      <div className="transcript">
         <title>Transcript</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-dark.min.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.8.1/lottie.min.js"></script>
 
-        <Navbar guild={guildid}/>
         <main>
           <TranscriptSidebar transcripts={transcripts} toggleSidebar={toggleSidebar}/>
           <div className="transcript-body">

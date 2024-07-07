@@ -20,7 +20,7 @@ import Navbar from './components/Nav/Navbar.jsx'
 function App() {
 
   const [self, setSelf] = React.useState(null);
-  
+  const [guild, setGuild] = React.useState("");
 
   React.useEffect(() => {
     axios.get('/api/discord/me').then(res => {
@@ -69,9 +69,9 @@ function App() {
   
   return (
       <div className="app">
-        <Guildbar />
+        <Guildbar setGuild={setGuild} />
         <div className="view">
-          <Navbar tag="ARC V3" self={self}/>
+          <Navbar location={guild} tag="ARC V3" self={self}/>
           <RouterProvider router={router}/>
         </div>
       </div>
