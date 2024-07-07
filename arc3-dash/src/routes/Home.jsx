@@ -6,9 +6,9 @@ import axios from 'axios'
 
 import { useState, useEffect } from 'react'
 
-import Infobox from '../components/Util/Infobox.jsx'
 import GuildInfoBox from '../components/Guild/GuildInfoBox.jsx'
 import InsightsInfoBox from '../components/Insights/InsightsInfoBox.jsx'
+import CommandStatInfoBox from "../components/Stats/CommandStatInfoBox";
 
 export default function Home() {
 
@@ -32,17 +32,7 @@ export default function Home() {
     <div className="home">
       <section className="left">
         <GuildInfoBox stats={stats} guild={guild}/>
-        <Infobox>
-            {
-                stats.map(x => {
-                    let argsl = "";
-                    for (let arg in x.args) {
-                        argsl += `${arg}: ${x.args[arg]} `
-                    }
-                    return <p>/{x.command_name} {argsl}</p>
-                })
-            }
-        </Infobox>
+        <CommandStatInfoBox stats={stats}/>
       </section>
       <section className="right">
         <InsightsInfoBox guild={guild}/>

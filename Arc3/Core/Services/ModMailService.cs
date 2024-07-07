@@ -443,6 +443,7 @@ public class ModMailService : ArcService
                 x.Data.GetElement("mailid").Value.AsString == mail.Id);
             insight.Data.Set("messages", new BsonInt32(msgCount));
             insight.Data.Set("participants", new BsonInt32(participants));
+            insight.Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             await _dbService.UpdateInsightDataAsync(insight);
         } else if (msgCount > 30 || participants > 5)

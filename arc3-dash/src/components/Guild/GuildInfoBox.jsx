@@ -1,5 +1,6 @@
 import InfoBox from '../Util/Infobox.jsx'
 import './GuildInfoBox.css'
+import Infobox from "../Util/Infobox.jsx";
 
 export default function GuildInfoBox({guild, stats}) {
 

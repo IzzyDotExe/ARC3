@@ -209,7 +209,7 @@ public class DbService : ArcService {
   {
     IMongoCollection<Insight> collection = GetCollection<Insight>("Insights");
     var filter = Builders<Insight>.Filter.Where(x => x.Id == item.Id);
-    var update = Builders<Insight>.Update.Set(x => x.Data, item.Data);
+    var update = Builders<Insight>.Update.Set(x => x.Data, item.Data).Set(x => x.Date, item.Date);
     await collection.UpdateOneAsync(filter, update);
   }
   
