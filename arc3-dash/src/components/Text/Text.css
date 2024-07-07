@@ -8,10 +8,13 @@
 a.button {
     padding: 5px;
     margin-right: 10px;
+    margin-bottom: 5px;
     background-color: white;
     color: black;
     border-radius: 5px;
     text-decoration: none;
+    display: inline-block;
+    text-wrap: nowrap;
 }
 
 a.button:hover {
