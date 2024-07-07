@@ -68,7 +68,6 @@ function App() {
   );
   
   return (
-    <React.StrictMode>
       <div className="app">
         <Guildbar />
         <div className="view">
@@ -76,7 +75,6 @@ function App() {
           <RouterProvider router={router}/>
         </div>
       </div>
-    </React.StrictMode>
   );
 }
 
