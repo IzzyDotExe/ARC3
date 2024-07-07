@@ -17,4 +17,6 @@
   margin: 20px 0;
   border-radius: 10px;
   color: white;
+  z-index: 3;
+  overflow: visible;
 }
