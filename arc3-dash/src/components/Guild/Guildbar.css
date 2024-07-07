@@ -1,9 +1,19 @@
 .guild-bar {
-
-
   background-color: rgb(41, 41, 41);
 }
 
 .guild-bar::-webkit-scrollbar {
   display: none;
+}
+
+
+
+@media screen and (max-width: 800px) {
+  .guild-bar {
+    position: absolute;
+    display: flex;
+    width: 100vw;
+    overflow-y: scroll;
+    bottom: 0;
+  }
 }
