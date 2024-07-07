@@ -27,9 +27,11 @@ export default function GuildInfoBox({guild}) {
       let insightcontent = getInsightContent(insight)
       
       insightElements.push(
-        <Insight insight={insight}>
-          {insightcontent}
-        </Insight>
+          <a className="insight-a" href={insight.url}>
+            <Insight insight={insight}>
+              {insightcontent}
+            </Insight>
+          </a>
       )
     })
     
