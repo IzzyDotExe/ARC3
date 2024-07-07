@@ -1,7 +1,46 @@
-.guilds {
+.home {
+  background-color: rgb(30, 30, 30);
+  flex: 1;
   display: flex;
-  width: 100%;
-  flex-wrap: wrap;
-  justify-content: center;
+  padding: 20px;
+  overflow-x: scroll;
+}
+
+.home > section {
+  flex: 1;
+  display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+@media screen and (min-width: 800px) {
+  .home {
+    flex-direction: row;
+  }
+}
+
+
+@media screen and (max-width: 800px) {
+  .home {
+    flex-direction: column;
+  }
+}
+
+.home > section.left {
+  flex-direction: column;
+}
+
+.home > section.left > div {
+  margin: 20px 0;
+}
+
+.home section.right {
+
+  justify-content: stretch;
+  margin: 20px;
+
+}
+
+.home section.right .infobox {
+  width: 100%;
 }

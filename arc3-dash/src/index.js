@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './App.css';
 import { createBrowserRouter, RouterProvider} from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
+
+import "./index.css"
 
 import axios from 'axios';
 
@@ -13,11 +14,13 @@ import Appeal from './routes/Appeal'
 import Appeals from './routes/Appeals'
 import UserNotes from './routes/UserNotes.jsx';
 import Notes from './routes/Notes'
+import Guildbar from './components/Guild/Guildbar.jsx'
+import Navbar from './components/Nav/Navbar.jsx'
 
 function App() {
 
   const [self, setSelf] = React.useState(null);
-  
+  const [guild, setGuild] = React.useState("");
 
   React.useEffect(() => {
     axios.get('/api/discord/me').then(res => {
@@ -65,9 +68,13 @@ function App() {
   );
   
   return (
-    <React.StrictMode>
-      <RouterProvider router={router}/>
-    </React.StrictMode>
+      <div className="app">
+        <Guildbar setGuild={setGuild} />
+        <div className="view">
+          <Navbar location={guild} tag="ARC V3" self={self}/>
+          <RouterProvider router={router}/>
+        </div>
+      </div>
   );
 }
 

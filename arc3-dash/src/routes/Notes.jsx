@@ -1,12 +1,11 @@
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Nav/Navbar';
 import { useState, useEffect} from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { Outlet } from "react-router-dom";
+import "./Notes.css"
 
-import './Notes.css'
-
-import {TranscriptMemberComponent} from '../components/TranscriptMemberComponent'
+import {TranscriptMemberComponent} from '../components/Transcripts/TranscriptMemberComponent'
 
 export default function Notes() {
 
@@ -21,33 +20,31 @@ export default function Notes() {
 
   return (
 
-    <>
-    
-    <div className="App">
+      <>
 
-      <title>User Notes</title>
+        <div className="App">
 
-      <Navbar guild={guild}/>
+          <title>User Notes</title>
 
-      <main>
-        <div className="NotesPick">
-          <div className = "sidebar">
-            {notesUsers.map(x => {
-              return <a href={`/${guild}/notes/${x}`}><TranscriptMemberComponent style={x == userid ? {"border": "2px solid red"} : {}} userid={x}/></a>
-            })
-            }
-          </div>
-          
-          <div className = "notes-sec">
-            <Outlet/>
-          </div>
-          
+          <main>
+            <div className="NotesPick">
+              <div className = "sidebar">
+                {notesUsers.map(x => {
+                  return <a href={`/${guild}/notes/${x}`}><TranscriptMemberComponent style={x == userid ? {"border": "2px solid red"} : {}} userid={x}/></a>
+                })
+                }
+              </div>
+
+              <div className = "notes-sec">
+                <Outlet/>
+              </div>
+
+            </div>
+          </main>
+
         </div>
-      </main>
 
-    </div>
-    
-    </>
+      </>
 
   )
 

@@ -5,6 +5,7 @@ using Arc3.Core.Schema.Ext;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using MongoDB.Bson;
 
 namespace Arc3.Core.Services;
 
@@ -333,6 +334,8 @@ public class ModMailService : ArcService
 
             if (!ActiveChannels.Contains((long)arg.Channel.Id))
                 return;
+
+            await GatherModmailInsights(arg);
                 
             // Quit if the message is commented
             if (arg.Content.StartsWith('#')) {
@@ -349,7 +352,7 @@ public class ModMailService : ArcService
         // Private messages are handled as from a user
         var mails = await _dbService.GetModMails();
         
-        if (!mails.Any(x=>(ulong)x.UserSnowflake == arg.Author.Id)) {
+        if (mails.All(x => (ulong)x.UserSnowflake != arg.Author.Id)) {
 
             // If there are no modmails in the database for this user, 
             // then we first check if they said modmail
@@ -405,6 +408,66 @@ public class ModMailService : ArcService
         }
         
         
+    }
+
+    private async Task GatherModmailInsights(SocketMessage socketMessage)
+    {
+        var mails = await _dbService.GetModMails();
+        var transcripts = await _dbService.GetItemsAsync<Transcript>("transcripts");
+        var insights = await _dbService.GetItemsAsync<Insight>("Insights");
+        var chan = socketMessage.Channel.Id;
+        var guild = _clientInstance.Guilds.First(x => x.Channels.Any(x => x.Id == chan));
+        
+        ModMail mail;
+        try
+        {
+            mail = mails.First(x => x.ChannelSnowflake == (long)socketMessage.Channel.Id);
+        }
+        catch (InvalidOperationException ex)
+        {
+            // No modmail exists
+            // Console.WriteLine($"Failed to get modmail {ex}");
+            return;
+        }
+        
+        var msgCount = transcripts.Count(x => x.ModMailId == mail.Id);
+        var participants = transcripts.Where(x => x.ModMailId == mail.Id).GroupBy(x => x.SenderSnowfake).Count();
+
+        if (insights.Any(x =>
+                x.Type == "modmail" && x.Data.Contains("mailid") &&
+                x.Data.GetElement("mailid").Value.AsString == mail.Id))
+        {
+
+            var insight = insights.First(x =>
+                x.Type == "modmail" && x.Data.Contains("mailid") &&
+                x.Data.GetElement("mailid").Value.AsString == mail.Id);
+            insight.Data.Set("messages", new BsonInt32(msgCount));
+            insight.Data.Set("participants", new BsonInt32(participants));
+            insight.Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+            await _dbService.UpdateInsightDataAsync(insight);
+        } else if (msgCount > 30 || participants > 5)
+        {
+            var data = new BsonDocument();
+            data.Add("mailid", new BsonString(mail.Id));
+            data.Add("messages", new BsonInt32(msgCount));
+            data.Add("participants", new BsonInt32(participants));
+            data.Add("member", new BsonString(mail.UserSnowflake.ToString()));
+
+            var newInsight = new Insight
+            {
+                Id = Guid.NewGuid().ToString(),
+                Data = data,
+                Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                GuildID = guild.Id.ToString(),
+                Tagline = "Modmail has high activity",
+                Type = "modmail",
+                Url = $"/{guild.Id}/transcripts/{mail.Id}"
+            };
+
+            await _dbService.AddAsync<Insight>(newInsight, "Insights");
+        }
+
     }
 
     public List<SelectMenuOptionBuilder> BuildModmailSelectMenu()

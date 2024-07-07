@@ -1,50 +1,49 @@
-import Navbar from '../components/Navbar';
-import { useState, useEffect} from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router';
 
-import "./Home.css"
-import Guild from '../components/Guild.jsx';
+import { useParams } from 'react-router';
+import './Home.css'
+
+import axios from 'axios'
+
+import { useState, useEffect } from 'react'
+
+import GuildInfoBox from '../components/Guild/GuildInfoBox.jsx'
+import InsightsInfoBox from '../components/Insights/InsightsInfoBox.jsx'
+import CommandStatInfoBox from "../components/Stats/CommandStatInfoBox";
+import Infobox from "../components/Util/Infobox";
 
 export default function Home() {
 
   const {guildid} = useParams()
+  const [guild, setGuild ] = useState({})
+  const [stats, setStats] = useState([])
 
-  const [guilds, setGuilds] = useState([])
-  const [guild, setGuild] = useState({})
-  
   useEffect(() => {
 
-    if (!guildid)
-      axios.get(`/api/discord/me/guilds`).then(res => {
-        setGuilds(res.data);
+    if (guildid) {
+      axios.get(`/api/discord/guilds/${guildid}/`).then(res => {
+        setGuild(res.data);
       })
 
-    else 
-      axios.get(`/api/discord/guilds/${guildid}`).then(res => {
-        setGuild(res.data)
+      axios.get(`/api/stats?guildid=${guildid}`).then(res => {
+        setStats((res.data))
       })
+    }
 
-  }, [guildid])
+
+  }, [guildid, setGuild, setStats])
 
   return (
-    <div className="App">
-      <Navbar guild={guildid}/>
-      <main>
-        <h1>Home</h1>
-        
-        {!guildid && <div className="guilds">
-          {guilds.map(x => {
-            return <a href={x.id}><Guild guild={x}/></a>
-          })}
-        </div>}
-
-        {
-          guildid &&
-          <Guild guild={guild}/>
-        }
-
-      </main>
+    <div className="home">
+      { guildid && <>
+        <section className="left">
+          <GuildInfoBox stats={stats} guild={guild}/>
+          <CommandStatInfoBox stats={stats}/>
+        </section>
+        <section className="right">
+          <InsightsInfoBox guild={guild}/>
+        </section>
+      </>
+      }
     </div>
   );
 };

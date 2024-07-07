@@ -11,6 +11,8 @@ using System.Diagnostics;
 using Arc3.Core.Schema;
 using System.ComponentModel;
 
+using MongoDB.Bson;
+
 namespace Arc3;
 
 internal class Arc3
@@ -79,7 +81,8 @@ internal class Arc3
 
     _client.Ready += ReadyAsync;
     _client.JoinedGuild += ClientOnJoinedGuild;
-
+    _client.InteractionCreated += InsightStatTrack;
+    
     // Get the token from our environment.
     var token = Environment.GetEnvironmentVariable("TOKEN");
 
@@ -91,6 +94,36 @@ internal class Arc3
     // Block this task until the program is closed!
     await Task.Delay(-1);
 
+  }
+
+  private async Task InsightStatTrack(SocketInteraction arg)
+  {
+    
+    var dbservice = _serviceProvider.GetRequiredService<DbService>();
+    
+    if (arg.Type == InteractionType.ApplicationCommand)
+    {
+      var cmd = (SocketSlashCommand)arg;  
+      var interaction = cmd.Data;
+      
+      var data = new BsonDocument();
+      foreach (var applicationCommandInteractionDataOption in interaction.Options)
+      {
+        data.Add(new BsonElement(applicationCommandInteractionDataOption.Name,
+          BsonValue.Create(applicationCommandInteractionDataOption.Value.ToString())));
+      }
+
+      var stat = new CommandStat()
+      {
+        Id = Guid.NewGuid().ToString(),
+        GuildID = arg.GuildId.ToString(),
+        Name = interaction.Name,
+        Args = data
+      };
+
+      await dbservice.AddAsync<CommandStat>(stat, "Commandstats");
+      
+    }
   }
 
   private async Task ClientOnJoinedGuild(SocketGuild arg)
@@ -182,7 +215,7 @@ internal class Arc3
       return;
 
     // Send the guild info
-    await db.AddAync<GuildInfo>(new GuildInfo()
+    await db.AddAsync<GuildInfo>(new GuildInfo()
     {
       GuildSnowflake = guild.Id.ToString(),
       Premium = false,

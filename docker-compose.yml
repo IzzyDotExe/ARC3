@@ -5,6 +5,7 @@ services:
   mongo:
     image: mongo:7.0
     container_name: mongo
+    command: ["--keyFile", "/data/mongo.keyfile"]
     restart: always
     networks:
       - common-net
@@ -13,6 +14,8 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongo_data:/data/db
+      - mongo_config:/data/configdb
+      - ./keys/mongo.keyfile:/data/mongo.keyfile
     ports:
       - 27017:27017
     healthcheck:
@@ -102,3 +105,4 @@ networks:
 
 volumes:
   mongo_data:
+  mongo_config:

@@ -1,11 +1,9 @@
-import Navbar from '../components/Navbar'
+import Navbar from '../components/Nav/Navbar'
 
 import { useState, useEffect } from 'react' 
 import axios from 'axios'
 
 import Appeal from '../components/Appeal'
-
-import './Appeals.css'
 
 export default function Appeals({ self }) {
 

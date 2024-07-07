@@ -1,0 +1,19 @@
+.nav-bar {
+  display: flex;
+  background-color: rgb(50, 50, 50);
+  width: 100%;
+  color: white;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 70px;
+} 
+
+.nav-bar * {
+  margin: 0 10px;
+}
+
+
+.member-icon {
+  border: white solid 2px;
+  width: 45px;
+}

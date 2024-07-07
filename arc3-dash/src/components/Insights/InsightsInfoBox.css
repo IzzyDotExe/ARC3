@@ -1,0 +1,24 @@
+.insights-infobox {
+  color: white;
+  max-height: 500px;
+  overflow-x: scroll;
+}
+
+.insights-infobox::-webkit-scrollbar {
+  display: none;
+}
+
+.insight-a {
+  text-decoration: none;
+  color: white;
+}
+
+
+.insight-a:visited {
+  text-decoration: none;
+  color: white;
+}
+
+.infobox:has(.insights-infobox) {
+
+}

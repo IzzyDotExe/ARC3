@@ -204,6 +204,14 @@ public class DbService : ArcService {
       .Set(x => x.AttachmentURls, msg.Attachments.Select(x => x.ProxyUrl).ToArray());
     await transcriptCollection.UpdateOneAsync(filter, update);
   }
+
+  public async Task UpdateInsightDataAsync(Insight item)
+  {
+    IMongoCollection<Insight> collection = GetCollection<Insight>("Insights");
+    var filter = Builders<Insight>.Filter.Where(x => x.Id == item.Id);
+    var update = Builders<Insight>.Update.Set(x => x.Data, item.Data).Set(x => x.Date, item.Date);
+    await collection.UpdateOneAsync(filter, update);
+  }
   
   public async Task<List<Jail>> GetJailsAsync() {
     
@@ -237,7 +245,7 @@ public class DbService : ArcService {
 
   }
 
-  public async Task AddAync<T>(T item, string collection) {
+  public async Task AddAsync<T>(T item, string collection) {
     var items = GetCollection<T>(collection);
     await items.InsertOneAsync(item);
   }

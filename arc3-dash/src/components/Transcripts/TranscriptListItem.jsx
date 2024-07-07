@@ -1,5 +1,5 @@
 import {TranscriptMemberComponent} from './TranscriptMemberComponent.jsx';
-import {timeAgo} from '../lib/utils.js';
+import {timeAgo} from '../../lib/utils.js';
 
 export  function TranscriptListItem({ data, key }) {
 
