@@ -23,3 +23,7 @@ export function timeAgo(prevDate) {
           return "";
   }
 }
+
+export function isEmptyOrSpaces(str){
+    return str && (str.match(/^ *$/) !== null)
+}

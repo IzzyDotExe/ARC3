@@ -1,0 +1,24 @@
+.note-user {
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+
+}
+
+.note-user:hover {
+    background-color: #3f3f3f;
+    cursor: pointer;
+}
+
+.note-user h2 {
+    padding: 0 20px;
+    font-size: large;
+}
+
+.note-user p {
+    color: gray;
+}
+
+.note-user img {
+    width: 35px;
+}
