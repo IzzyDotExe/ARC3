@@ -28,11 +28,6 @@
   margin: 10px 30px;
 }
 
-.notes-display {
-  width: 100%;
-  overflow-x: scroll;
-}
-
 .notes > section >  h2 {
   color: white;
   font-size: xx-large;

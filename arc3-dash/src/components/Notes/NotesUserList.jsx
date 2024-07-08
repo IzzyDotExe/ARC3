@@ -1,5 +1,5 @@
 import {NoteUser} from "./NoteUser";
-import './NoteUserList.css'
+import './NotesUserList.css'
 import {useEffect, useState} from "react";
 
 export default function NoteUserList({notesUsers, setNotes, filter}) {
