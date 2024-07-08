@@ -14,7 +14,7 @@ async function GetUserNotes(req, res) {
   try {
 
     const notes = await UserNote.find();
-    res.status(200).json(notes.filter(x => x.guildsnowflake == guildid && x.usersnowflake == userid));
+    res.status(200).json(notes.filter(x => x.guildsnowflake === guildid && ( userid === "all" || x.usersnowflake === userid )));
 
   } catch (e) {
     console.error(e.message)

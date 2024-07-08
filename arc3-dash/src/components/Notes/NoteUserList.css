@@ -1,0 +1,4 @@
+.note-user {
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,21 +1,53 @@
-.NotesPick {
-  width: 100%;
-  height: 100%;
+.notes {
+  background-color: rgb(30, 30, 30);
+  flex: 1;
   display: flex;
+  padding: 20px;
+  overflow-x: scroll;
 }
 
-.NotesPick > 
-.sidebar {
-  padding: 10px;
-  flex: 2;
+.notes > section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #333333;
+  margin: 20px;
+  border-radius: 20px;
 }
 
-.NotesPick >
-.notes-sec {
-  flex: 5;
+.notes > section > input {
+  width: 70%;
+  height: 20px;
 }
 
-.sidebar
-.user-tr {
-  padding: 10px;
+.notes-user-list {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  margin: 10px 30px;
+}
+
+.notes-display {
+  width: 100%;
+  overflow-x: scroll;
+}
+
+.notes > section >  h2 {
+  color: white;
+  font-size: xx-large;
+  margin: 20px 0;
+}
+
+@media screen and (min-width: 800px) {
+  .notes {
+    flex-direction: row;
+  }
+}
+
+
+@media screen and (max-width: 800px) {
+  .notes {
+    flex-direction: column;
+  }
 }

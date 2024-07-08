@@ -2,7 +2,7 @@ import { useParams } from 'react-router';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import {Note} from '../components/Note'
+import {Note} from '../components/Notes/Note'
 
 
 export default function UserNotes() {
