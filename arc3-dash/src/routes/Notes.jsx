@@ -6,6 +6,7 @@ import "./Notes.css"
 
 import NoteUserList from "../components/Notes/NotesUserList";
 import {Note} from "../components/Notes/Note";
+import NotesDisplay from "../components/Notes/NotesDisplay";
 
 export default function Notes() {
 
@@ -45,15 +46,3 @@ export default function Notes() {
 }
 
 
-function NotesDisplay({notes, filter}) {
-
-    return <section className="notes-display">
-        {
-            notes.sort((a, b) => {
-                return parseInt(b.date) - parseInt(a.date)
-            }).map((x, i) => {
-                return <Note note={x} lid={i} key={i}/>
-            })
-        }
-    </section>
-}
