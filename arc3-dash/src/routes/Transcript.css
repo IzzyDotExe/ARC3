@@ -204,6 +204,10 @@ a:hover {
     margin-bottom: 1rem
 }
 
+.chatlog__message-group:has(+.chatlog__message-group) {
+    margin-bottom: 1rem;
+}
+
 .chatlog__message-container {
     background-color: transparent;
     transition: background-color 1s ease
