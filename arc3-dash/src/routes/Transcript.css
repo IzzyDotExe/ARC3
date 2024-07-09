@@ -139,7 +139,7 @@ a:hover {
 .transcript-body {
     margin: 0;
     padding: 0;
-    background-color: #36393e;
+    background-color: rgb(30, 30, 30);
     color: #dcddde;
     font-family: "gg sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 17px;
@@ -200,7 +200,7 @@ a:hover {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1)
 }
 
-.chatlog__message-group {
+.chatlog__message:has( + .chatlog__message-group) {
     margin-bottom: 1rem
 }
 
@@ -226,7 +226,7 @@ a:hover {
 }
 
 .chatlog__message:hover {
-    background-color: #32353b
+    background-color: rgb(35, 35, 35)
 }
 
 .chatlog__message:hover .chatlog__short-timestamp {
@@ -266,6 +266,10 @@ a:hover {
 .chatlog__message-primary {
     grid-column: 2;
     min-width: 0
+}
+
+.under {
+    margin: 0;
 }
 
 .chatlog__reply {
