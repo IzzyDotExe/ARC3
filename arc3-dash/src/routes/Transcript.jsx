@@ -1,5 +1,5 @@
 import { useParams } from 'react-router';
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import axios from 'axios';
 
 import './Transcript.css'
@@ -32,6 +32,19 @@ export default function Transcript() {
 
   }, [mailId, guildid]);
 
+  const renderMessages = useCallback(() => {
+
+      if (!modmail)
+          return
+
+      var prevmail = {sendersnowflake:0}
+      return modmail.map((x, i, d) => {
+          var showuser = x.sendersnowflake !== prevmail.sendersnowflake
+          prevmail = x;
+          return <TranscriptMessage showuser={showuser} data={x} key={i}/>
+      })
+  }, [modmail])
+
   return (
     <>
       <div className="preamble">
@@ -43,15 +56,13 @@ export default function Transcript() {
 
         <div className="preamble__entries-container">
             <div className="preamble__entry">{ServerName}</div>
-            <div className="preamble__entry"><button onClick={toggleSidebar}>Transcripts</button></div>
+            <div className="preamble__entry"><button className="button" onClick={toggleSidebar}>Transcripts</button></div>
             <div className="preamble__entry">{mailId}</div>
         </div>
 
       </div>
 
-      <p>{modmail.map((x, i, d) => {
-        return <TranscriptMessage data={x} key={i}/>
-      })}</p>
+      <p>{renderMessages()}</p>
 
       <div className="postamble">
         <div className="postamble__entry">Saved {modmail.length} message(s)</div>
