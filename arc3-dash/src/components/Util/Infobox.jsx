@@ -1,9 +1,12 @@
 
 import './Infobox.css'
 
-export default function Infobox( { children, inner } ) {
+export default function Infobox( { children, inner, onClick, outline } ) {
 
-  return <div className={inner? "inner-infobox" : "infobox"}>
+  if (!onClick)
+      onClick = () => {}
+
+  return <div style={outline? {border: "solid white 2px"} : {}} onClick={onClick} className={inner? "inner-infobox" : "infobox"}>
     {children}
   </div>
 

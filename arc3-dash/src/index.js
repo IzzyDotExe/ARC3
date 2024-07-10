@@ -41,7 +41,6 @@ function App() {
         path: "/:guildid",
         element: <Home/>
       },
-
       {
         path: "/:guild/notes/",
         element: <Notes/>,
