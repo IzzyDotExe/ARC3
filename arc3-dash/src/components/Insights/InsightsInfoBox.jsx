@@ -25,16 +25,26 @@ export default function GuildInfoBox({guild}) {
     }).forEach(insight => {
       
       let insightcontent = getInsightContent(insight)
-      
-      insightElements.push(
-          <a className="insight-a" href={insight.url}>
-            <Insight insight={insight}>
-              {insightcontent}
-            </Insight>
-          </a>
-      )
+
+      if (insight.url !== "")
+        insightElements.push(
+            <a className="insight-a" href={insight.url}>
+              <Insight insight={insight}>
+                {insightcontent}
+              </Insight>
+            </a>
+        )
+      else
+        insightElements.push(
+
+              <Insight insight={insight}>
+                {insightcontent}
+              </Insight>
+
+        )
+
     })
-    
+
     return insightElements
   }, [insights]);
 
