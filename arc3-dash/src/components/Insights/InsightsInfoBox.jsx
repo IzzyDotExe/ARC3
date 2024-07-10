@@ -43,7 +43,6 @@ export default function GuildInfoBox({guild}) {
     if (guild.id)
       axios.get(`/api/insights?guildid=${guild.id}`).then(res => {
         setInsights(res.data)
-        console.log(res.data)
       })
 
   }, [guild.id])
