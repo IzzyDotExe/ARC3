@@ -43,10 +43,12 @@ internal class Arc3
 
     // Create a new instance of the socket client
     _client = new DiscordSocketClient(config);
-
+    
+    _interactions = new InteractionService(_client);
+    
     // Create our service provider
     _serviceProvider = new ServiceCollection()
-      .AddSingleton<InteractionService>()
+      .AddSingleton<InteractionService>(_interactions)
       .AddSingleton<DiscordSocketClient>(_client)
       .AddSingleton<DbService>()
       .AddSingleton<KaraokeService>()
@@ -58,8 +60,8 @@ internal class Arc3
       .BuildServiceProvider();
 
     // Instantiate your services
-    _interactions = _serviceProvider.GetRequiredService<InteractionService>();
     // TODO: Figure out Socket comms
+    
     // var socketComms = _serviceProvider.GetRequiredService<SocketCommService>();
     var dbService = _serviceProvider.GetRequiredService<DbService>();
     var modmailService = _serviceProvider.GetRequiredService<ModMailService>();
