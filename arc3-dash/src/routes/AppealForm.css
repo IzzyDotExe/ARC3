@@ -1,0 +1,47 @@
+.appeal-form {
+    background-color: rgb(30, 30, 30);
+    flex: 1;
+    display: flex;
+    padding: 20px;
+    overflow-x: scroll;
+    justify-content: center;
+}
+
+.appeal-form > section {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #333333;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 20px;
+    width: 50%;
+    justify-content: center;
+}
+
+.form > .header-sec {
+    flex: 1;
+}
+
+.form > .content-sec {
+    flex: 7;
+}
+
+
+.appeal-form h2 {
+    color: white;
+    font-size: xx-large;
+    margin: 20px 0;
+}
+
+.header-sec {
+    justify-content: space-evenly;
+    display: flex;
+    align-items: center;
+    width: 50%;
+}
+
+section.header-sec img {
+    width: 50px;
+    border-radius: 50%;
+}

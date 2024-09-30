@@ -40,7 +40,6 @@ export default function Notes() {
                 <NotesDisplay filter={filter} notes={notes}/>
           </section>
       </div>
-
   )
 
 }

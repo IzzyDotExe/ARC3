@@ -10,12 +10,13 @@ import axios from 'axios';
 import Home from './routes/Home';
 import Transcript from './routes/Transcript';
 import Transcripts from './routes/Transcripts';
-import Appeal from './routes/Appeal'
-import Appeals from './routes/Appeals'
 import UserNotes from './routes/UserNotes.jsx';
 import Notes from './routes/Notes'
 import Guildbar from './components/Guild/Guildbar.jsx'
 import Navbar from './components/Nav/Navbar.jsx'
+import Appeal from "./components/Appeal";
+import GuildAppeal from "./components/GuildAppeal";
+import AppealForm from "./routes/AppealForm";
 
 function App() {
 
@@ -36,18 +37,21 @@ function App() {
         path: "/",
         element: <Home/>
       },
-
       {
         path: "/:guildid",
         element: <Home/>
+      },
+      {
+        path: "/:guildid/appeals/form",
+        element: <AppealForm/>,
       },
       {
         path: "/:guild/notes/",
         element: <Notes/>,
         children: [
           {
-          path: ":userid",
-          element: <UserNotes />
+            path: ":userid",
+            element: <UserNotes />
           }
         ]
       },
